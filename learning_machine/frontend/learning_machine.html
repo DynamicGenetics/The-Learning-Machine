@@ -241,8 +241,8 @@
           for(let i = 0; i < 6; i++){
             if(d8r.dist(data.nodes[i].fx,data.nodes[i].fy,d.fx,d.fy)<targetr){
               // Send the label to the backend
-              // serverCall(d.id, data.nodes[i].id);
-              serverCallLive(d.id, data.nodes[i].id);
+              serverCall(d.id, data.nodes[i].id);
+              // serverCallLive(d.id, data.nodes[i].id);
               // Make the target circle flash
               let target = d3.select("#" + data.nodes[i].id + "_target");
               target.transition(t).attr("fill","#CCC").transition(t).attr("fill","#EEE");
@@ -270,37 +270,43 @@
         console.log(data);
         data.nodes.splice(6,data.nodes.length-1);
         data.links = [];
-        // restart();
 
-        let callObject = {
-          restart: true,
-          new_nodes: numberOfFaces // Number of new nodes (in addition to current_nodes)
-        };
-        fetch('https://localhost:8282/learning_machine_backend', { // Or whatever it's called
-          method: 'POST', // or 'PUT'
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(callObject),
-        })
-        .then((response) => response.json())
-        .then((myJson) => {
-          // console.log('Success:', dat);
-          // nodesArray = dat.nodes.map(d => Object.create(d));
-          //console.log(nodesArray.map(x => x.nodes[0].id));
+        //*** For demo purposes ***
+        nodesArray = d8r.getNodeArray(numberOfFaces);
+        data = d8r.compileData(nodesArray);
 
-          // May need to find and update existing objects if this doesn't work
-          //data = d8r.compileData(myJson.nodes.map(d8r.toNodeArrayNode));
+        restart();
+        //*** End demo ***
 
-          // like this
-          nodesArray = d8r.refreshNodeArray(nodesArray, myJson.nodes);
-          data = d8r.compileData(nodesArray);
-
-          restart();
-        })
-        .catch((error) => {
-          console.error('Restart server error:', error);
-        });
+        // let callObject = {
+        //   restart: true,
+        //   new_nodes: numberOfFaces // Number of new nodes (in addition to current_nodes)
+        // };
+        // fetch('https://localhost:8282/learning_machine_backend', { // Or whatever it's called
+        //   method: 'POST', // or 'PUT'
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify(callObject),
+        // })
+        // .then((response) => response.json())
+        // .then((myJson) => {
+        //   // console.log('Success:', dat);
+        //   // nodesArray = dat.nodes.map(d => Object.create(d));
+        //   //console.log(nodesArray.map(x => x.nodes[0].id));
+        //
+        //   // May need to find and update existing objects if this doesn't work
+        //   //data = d8r.compileData(myJson.nodes.map(d8r.toNodeArrayNode));
+        //
+        //   // like this
+        //   nodesArray = d8r.refreshNodeArray(nodesArray, myJson.nodes);
+        //   data = d8r.compileData(nodesArray);
+        //
+        //   restart();
+        // })
+        // .catch((error) => {
+        //   console.error('Restart server error:', error);
+        // });
       });
 
       function serverCall(imageId, emolabel){
