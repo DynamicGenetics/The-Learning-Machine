@@ -194,4 +194,4 @@ class UNetMachine(LearningMachine):
     @staticmethod
     def _get_model_emotion_predictions(model_output: ModelOutput) -> Prediction:
         reco_images, emotions_logits = model_output
-        return emotions_logits.detach().numpy()
+        return emotions_logits.detach().cpu()

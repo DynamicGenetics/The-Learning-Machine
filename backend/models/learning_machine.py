@@ -156,15 +156,15 @@ class LearningMachine(ABC):
             outputs = self._get_model_emotion_predictions(outputs)
             if not as_proba:
                 return outputs  # return logits
-            probabilities = (outputs - outputs.min(axis=1, keepdims=True)) / (
-                outputs.max(axis=1, keepdims=True) - outputs.min(axis=1, keepdims=True)
-            )
+            outputs_min = outputs.min(axis=1, keepdims=True)[0]
+            outputs_max = outputs.max(axis=1, keepdims=True)[0]
+            probabilities = (outputs - outputs_min) / (outputs_max - outputs_min)
             probabilities /= probabilities.sum(axis=1, keepdims=True)
             return probabilities
 
     @staticmethod
     def _get_model_emotion_predictions(model_output: ModelOutput) -> Prediction:
-        return model_output.detach().numpy()
+        return model_output.detach().cpu()
 
     def fit(self, samples: Sequence[Sample]) -> NoReturn:
         """ """
