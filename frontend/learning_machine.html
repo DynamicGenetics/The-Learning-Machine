@@ -633,6 +633,50 @@
                 });
               });
 
+              // What happens when you click the forget button
+              const forgetButton = d3.select("#forget");
+              forgetButton.on("click", () => {
+                forgetButton.select("circle")
+                  .transition().duration(100)
+                  .attr("fill","#CCC")
+                  .transition().duration(100)
+                  .attr("fill","#EEE");
+
+                // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
+                //     .then(response => response.json())
+                //     .then((json) => {
+                //         nodesArray = d8r.preprocess(json);
+                //         // Set up data
+                //         data = d8r.compileData(nodesArray);
+                //         restart();
+                // })
+                // .catch((error) => {
+                //   console.error('Restart server error:', error);
+                // });
+              });
+
+              // What happens when you click the info button
+              const infoButton = d3.select("#info");
+              infoButton.on("click", () => {
+                infoButton.select("circle")
+                  .transition().duration(100)
+                  .attr("fill","#CCC")
+                  .transition().duration(100)
+                  .attr("fill","#EEE");
+
+                // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
+                //     .then(response => response.json())
+                //     .then((json) => {
+                //         nodesArray = d8r.preprocess(json);
+                //         // Set up data
+                //         data = d8r.compileData(nodesArray);
+                //         restart();
+                // })
+                // .catch((error) => {
+                //   console.error('Restart server error:', error);
+                // });
+              });
+
               function sendToBackend(imageId, emolabel){
                   // Remove the dragged element
                   for(let i = 0; i < nodesArray.length; i++){
