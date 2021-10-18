@@ -12,7 +12,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
 
-    <title>Learning Machine</title>
+    <title>The Learning Machine</title>
 
     <style>
       .link {
@@ -30,13 +30,34 @@
       .emoji-label {
           font-family: sans-serif;
           font-size: 14px;
-          fill: #888;
+          fill: #555;
       }
 
-      #refresh-label {
-          font-family: sans-serif;
-          font-size: 14px;
-          fill: #888;
+      .h1-label {
+        font-family: sans-serif;
+        font-size: 24px;
+        fill: #000;
+      }
+
+      .description {
+        font-family: sans-serif;
+        font-size: 14px;
+        color: #555;
+      }
+
+      #blurb {
+        position: absolute;
+        top: 66px;
+        right: 50px;
+        width: 350px;
+        text-align: right;
+      }
+
+      #header {
+        position: absolute;
+        top: 24px;
+        right: 50px;
+        text-align: right;
       }
 
       text {
@@ -48,6 +69,16 @@
   </head>
 
   <body>
+    <div id="header" class="h1-label">The Learning Machine</div>
+    <div id="blurb" class="description">
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+          commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+           velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+           occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+           mollit anim id est laborum.</p>
+    </div>
     <svg width="1400" height="800"></svg>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
