@@ -45,6 +45,10 @@
         color: #555;
       }
 
+      .target {
+        stroke-dasharray: 10,5;
+      }
+
       #blurb {
         position: absolute;
         top: 66px;
@@ -161,6 +165,7 @@
               .attr("fill", "#EEE")
               .attr("cx", hex[i].x)
               .attr("cy", hex[i].y)
+              .attr("class", "target")
               .attr("id", d8r.fixedNodeIDs[i] + "_target")
               .attr("stroke", colours[i])
               .attr("stroke-width", 3);
@@ -308,6 +313,7 @@
           //.attr("id", "neutral")
       svg.append("circle")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("class", "target")
           .attr("id", "neutral")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (2.5 * targetr))
@@ -360,6 +366,7 @@
           //.attr("id", "not-human")
       svg.append("circle")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("class", "target")
           .attr("id", "not-human")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (5 * targetr))
