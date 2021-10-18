@@ -190,6 +190,46 @@
           .attr("width", 50)
           .attr("pointer-events", "none");
 
+      // Info button
+      svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("id", "info")
+        .append("circle")
+          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cy", hex[5].y + (5 * targetr))
+          .attr("fill", "#EEE")
+          .attr("r", targetr);
+
+      svg.append("text")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("id", "info-label")
+          .attr("class", "emoji-label")
+          .attr("text-anchor", "middle")
+          .attr("x", hex[4].x - (4 * targetr))
+          .attr("y", hex[5].y + 40 + (5 * targetr))
+          .text("info")
+          .attr("pointer-events", "none");
+
+      svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+        .append("circle")
+          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cy", hex[5].y + (5 * targetr))
+          .attr("fill", "#FFF")
+          .attr("r", 25)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 7);
+
+      svg.append("image")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("xlink:href", "info.svg")
+          .attr("id", "info-image")
+          .attr("x", hex[4].x - (4 * targetr) - 25)
+          .attr("y", hex[5].y -25 + (5 * targetr))
+          .attr("height", 50)
+          .attr("width", 50)
+          .attr("pointer-events", "none");
+
       // Neutral face target
       // svg.append("g")
       //     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
