@@ -49,7 +49,7 @@
         position: absolute;
         top: 66px;
         right: 50px;
-        width: 350px;
+        width: 400px;
         text-align: right;
       }
 
@@ -58,6 +58,26 @@
         top: 24px;
         right: 50px;
         text-align: right;
+      }
+
+      #university {
+        position: absolute;
+        bottom: 24px;
+        right: 219px;
+      }
+
+      #university img {
+        height: 50px;
+      }
+
+      #turing {
+        position: absolute;
+        bottom: 24px;
+        right: 50px;
+      }
+
+      #turing img {
+        height: 50px;
       }
 
       text {
@@ -78,6 +98,12 @@
            velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
            occaecat cupidatat non proident, sunt in culpa qui officia deserunt
            mollit anim id est laborum.</p>
+    </div>
+    <div id="turing">
+      <img src="Alan-Turing-Institute.svg">
+    </div>
+    <div id="university">
+      <img src="University-of-Bristol.svg">
     </div>
     <svg width="1400" height="800"></svg>
     <!-- Optional JavaScript -->
@@ -106,7 +132,7 @@
           .attr("cy", 0);
 
       // Layout parameters
-      const cx = 0;
+      const cx = -50;
       const cy = 0;
       const gs = 180;
       const numberOfFaces = 25;
@@ -156,17 +182,30 @@
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
           .attr("id", "refresh")
         .append("circle")
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[5].y)
           .attr("fill", "#EEE")
           .attr("r", targetr);
+
+      svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+        .append("circle")
+          // .attr("cx", hex[4].x - (4 * targetr))
+          // .attr("cy", hex[5].y + (2.5 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y)
+          .attr("fill", "#FFF")
+          .attr("r", 25)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 7)
+          .attr("pointer-events", "none");
 
       svg.append("text")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
           .attr("id", "refresh-label")
           .attr("class", "emoji-label")
           .attr("text-anchor", "middle")
-          .attr("x", hex[4].x - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr) + 25)
           .attr("y", hex[5].y + 40)
           .text("refresh")
           .attr("pointer-events", "none");
@@ -175,7 +214,7 @@
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
           .attr("xlink:href", "refresh_alt2.svg")
           .attr("id", "refresh-image")
-          .attr("x", hex[4].x - (4 * targetr) - 25)
+          .attr("x", hex[4].x - (4 * targetr))
           .attr("y", hex[5].y -25)
           .attr("height", 50)
           .attr("width", 50)
@@ -186,7 +225,7 @@
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
           .attr("id", "forget")
         .append("circle")
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[5].y + (2.5 * targetr))
           .attr("fill", "#EEE")
           .attr("r", targetr);
@@ -196,7 +235,7 @@
           .attr("id", "forget-label")
           .attr("class", "emoji-label")
           .attr("text-anchor", "middle")
-          .attr("x", hex[4].x - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr) + 25)
           .attr("y", hex[5].y + 40 + (2.5 * targetr))
           .text("forget")
           .attr("pointer-events", "none");
@@ -204,18 +243,19 @@
       svg.append("g")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
         .append("circle")
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[5].y + (2.5 * targetr))
           .attr("fill", "#FFF")
           .attr("r", 25)
           .attr("stroke", "#FFF")
-          .attr("stroke-width", 7);
+          .attr("stroke-width", 7)
+          .attr("pointer-events", "none");;
 
       svg.append("image")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
           .attr("xlink:href", "forget_alt.svg")
           .attr("id", "forget-image")
-          .attr("x", hex[4].x - (4 * targetr) - 25)
+          .attr("x", hex[4].x - (4 * targetr))
           .attr("y", hex[5].y -25 + (2.5 * targetr))
           .attr("height", 50)
           .attr("width", 50)
@@ -226,7 +266,7 @@
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
           .attr("id", "info")
         .append("circle")
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[5].y + (5 * targetr))
           .attr("fill", "#EEE")
           .attr("r", targetr);
@@ -236,7 +276,7 @@
           .attr("id", "info-label")
           .attr("class", "emoji-label")
           .attr("text-anchor", "middle")
-          .attr("x", hex[4].x - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr) + 25)
           .attr("y", hex[5].y + 40 + (5 * targetr))
           .text("info")
           .attr("pointer-events", "none");
@@ -244,18 +284,19 @@
       svg.append("g")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
         .append("circle")
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[5].y + (5 * targetr))
           .attr("fill", "#FFF")
           .attr("r", 25)
           .attr("stroke", "#FFF")
-          .attr("stroke-width", 7);
+          .attr("stroke-width", 7)
+          .attr("pointer-events", "none");;
 
       svg.append("image")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
           .attr("xlink:href", "info.svg")
           .attr("id", "info-image")
-          .attr("x", hex[4].x - (4 * targetr) - 25)
+          .attr("x", hex[4].x - (4 * targetr))
           .attr("y", hex[5].y -25 + (5 * targetr))
           .attr("height", 50)
           .attr("width", 50)
@@ -270,7 +311,7 @@
           .attr("id", "neutral")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (2.5 * targetr))
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[3].y - (2.5 * targetr))
           .attr("fill", "#EEE")
           .attr("r", targetr)
@@ -282,7 +323,7 @@
         .append("circle")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (2.5 * targetr))
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[3].y - (2.5 * targetr))
           .attr("fill", "#FFF")
           .attr("r", 25)
@@ -296,7 +337,7 @@
           .attr("text-anchor", "middle")
           // .attr("x", hex[4].x - (4 * targetr))
           // .attr("y", hex[5].y + 40 + (2.5 * targetr))
-          .attr("x", hex[4].x - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr) + 25)
           .attr("y", hex[3].y + 40 - (2.5 * targetr))
           .text("neutral")
           .attr("pointer-events", "none");
@@ -307,7 +348,7 @@
           .attr("id", "neutral-image")
           // .attr("x", hex[4].x - (4 * targetr) - 25)
           // .attr("y", hex[5].y -25 + (2.5 * targetr))
-          .attr("x", hex[4].x - 25 - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr))
           .attr("y", hex[3].y - 25 - (2.5 * targetr))
           .attr("height", 50)
           .attr("width", 50)
@@ -322,7 +363,7 @@
           .attr("id", "not-human")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (5 * targetr))
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[3].y)
           .attr("fill", "#EEE")
           .attr("r", targetr)
@@ -334,7 +375,7 @@
         .append("circle")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (2.5 * targetr))
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[3].y)
           .attr("fill", "#FFF")
           .attr("r", 25)
@@ -348,7 +389,7 @@
           .attr("text-anchor", "middle")
           // .attr("x", hex[4].x - (4 * targetr))
           // .attr("y", hex[5].y + 40 + (5 * targetr))
-          .attr("x", hex[4].x - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr) + 25)
           .attr("y", hex[3].y + 40 )
           .text("not human")
           .attr("pointer-events", "none");
@@ -359,37 +400,37 @@
           .attr("id", "not-human-image")
           // .attr("x", hex[4].x - (4 * targetr) - 25)
           // .attr("y", hex[5].y -25 + (5 * targetr))
-          .attr("x", hex[4].x - 25 - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr))
           .attr("y", hex[3].y - 25 )
           .attr("height", 50)
           .attr("width", 50)
           .attr("pointer-events", "none");
 
       // Logos
-      svg.append("image")
-          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-          .attr("xlink:href", "University-of-Bristol.svg")
-          .attr("id", "University-of-Bristol")
-          // .attr("x", hex[4].x - (4 * targetr) - 25)
-          // .attr("y", hex[5].y -25 + (5 * targetr))
-          .attr("x", hex[1].x - targetr + 10)
-          .attr("y", hex[2].y + 7)
-          .attr("height", 50)
-          // .attr("width", 50)
-          .attr("pointer-events", "none");
-
-      svg.append("image")
-          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-          .attr("xlink:href", "Alan-Turing-Institute.svg")
-          .attr("id", "Alan-Turing-Institute")
-          // .attr("x", hex[4].x - (4 * targetr) - 25)
-          // .attr("y", hex[5].y -25 + (5 * targetr))
-          .attr("x", hex[1].x + (4 * targetr) - 30)
-          // .attr("x", hex[1].x + 170)
-          .attr("y", hex[2].y + 7)
-          .attr("height", 50)
-          // .attr("width", 50)
-          .attr("pointer-events", "none");
+      // svg.append("image")
+      //     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+      //     .attr("xlink:href", "University-of-Bristol.svg")
+      //     .attr("id", "University-of-Bristol")
+      //     // .attr("x", hex[4].x - (4 * targetr) - 25)
+      //     // .attr("y", hex[5].y -25 + (5 * targetr))
+      //     .attr("x", hex[1].x - targetr + 10)
+      //     .attr("y", hex[2].y + 7)
+      //     .attr("height", 50)
+      //     // .attr("width", 50)
+      //     .attr("pointer-events", "none");
+      //
+      // svg.append("image")
+      //     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+      //     .attr("xlink:href", "Alan-Turing-Institute.svg")
+      //     .attr("id", "Alan-Turing-Institute")
+      //     // .attr("x", hex[4].x - (4 * targetr) - 25)
+      //     // .attr("y", hex[5].y -25 + (5 * targetr))
+      //     .attr("x", hex[1].x + (4 * targetr) - 30)
+      //     // .attr("x", hex[1].x + 170)
+      //     .attr("y", hex[2].y + 7)
+      //     .attr("height", 50)
+      //     // .attr("width", 50)
+      //     .attr("pointer-events", "none");
 
 
       // *** End set up plotting area ***
