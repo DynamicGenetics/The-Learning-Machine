@@ -138,7 +138,7 @@
           .attr("cy", 0);
 
       // Layout parameters
-      const cx = -50;
+      const cx = 0;
       const cy = 0;
       const gs = 180;
       const numberOfFaces = 25;
@@ -160,6 +160,13 @@
 
       // Target circles for the emoji areas
       const hex = d8r.hexagonArray(cx, cy, gs);
+      svg.append("polygon")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("points", hex[0].x+","+hex[0].y+" "+hex[1].x+","+hex[1].y+" "+hex[2].x+","+hex[2].y+" "+hex[3].x+","+hex[3].y+" "+hex[4].x+","+hex[4].y+" "+hex[5].x+","+hex[5].y)
+          .attr("fill", "none")
+          .attr("stroke", "#EEE")
+          .attr("stroke-width", 3);
+
       for (let i = 0; i < 6; i++) {
           svg.append("circle")
               .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
