@@ -182,6 +182,30 @@
               .attr("pointer-events", "none");
       }
 
+      // Button area
+      let buttonZone = svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("id", "button-zone");
+
+      buttonZone.append("circle")
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y)
+          .attr("fill", "#EEE")
+          .attr("r", targetr + 20);
+
+      buttonZone.append("circle")
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y + (5 * targetr))
+          .attr("fill", "#EEE")
+          .attr("r", targetr + 20);
+
+      buttonZone.append("rect")
+          .attr("x", hex[4].x - (5 * targetr) + 5)
+          .attr("y", hex[5].y)
+          .attr("width", (2 * targetr) + 40)
+          .attr("height", 5 * targetr)
+          .attr("fill", "#EEE");
+
       // Refresh button
       svg.append("g")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
@@ -189,8 +213,10 @@
         .append("circle")
           .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[5].y)
-          .attr("fill", "#EEE")
-          .attr("r", targetr);
+          .attr("fill", "#CCC")
+          .attr("r", targetr)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 3);
 
       svg.append("g")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
@@ -232,8 +258,10 @@
         .append("circle")
           .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[5].y + (2.5 * targetr))
-          .attr("fill", "#EEE")
-          .attr("r", targetr);
+          .attr("fill", "#CCC")
+          .attr("r", targetr)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 3);
 
       svg.append("text")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
@@ -273,8 +301,10 @@
         .append("circle")
           .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[5].y + (5 * targetr))
-          .attr("fill", "#EEE")
-          .attr("r", targetr);
+          .attr("fill", "#CCC")
+          .attr("r", targetr)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 3);
 
       svg.append("text")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
@@ -616,9 +646,9 @@
               refreshButton.on("click", () => {
                 refreshButton.select("circle")
                   .transition().duration(100)
-                  .attr("fill","#CCC")
+                  .attr("fill","#EEE")
                   .transition().duration(100)
-                  .attr("fill","#EEE");
+                  .attr("fill","#CCC");
 
                 fetch(`http://localhost:8000/faces/${numberOfFaces}`)
                     .then(response => response.json())
@@ -638,9 +668,9 @@
               forgetButton.on("click", () => {
                 forgetButton.select("circle")
                   .transition().duration(100)
-                  .attr("fill","#CCC")
+                  .attr("fill","#EEE")
                   .transition().duration(100)
-                  .attr("fill","#EEE");
+                  .attr("fill","#CCC");
 
                 // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
                 //     .then(response => response.json())
@@ -660,9 +690,9 @@
               infoButton.on("click", () => {
                 infoButton.select("circle")
                   .transition().duration(100)
-                  .attr("fill","#CCC")
+                  .attr("fill","#EEE")
                   .transition().duration(100)
-                  .attr("fill","#EEE");
+                  .attr("fill","#CCC");
 
                 // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
                 //     .then(response => response.json())
