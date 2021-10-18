@@ -334,6 +334,32 @@
           .attr("width", 50)
           .attr("pointer-events", "none");
 
+      // Logos
+      svg.append("image")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("xlink:href", "University-of-Bristol.svg")
+          .attr("id", "University-of-Bristol")
+          // .attr("x", hex[4].x - (4 * targetr) - 25)
+          // .attr("y", hex[5].y -25 + (5 * targetr))
+          .attr("x", hex[1].x - targetr + 10)
+          .attr("y", hex[2].y + 7)
+          .attr("height", 50)
+          // .attr("width", 50)
+          .attr("pointer-events", "none");
+
+      svg.append("image")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("xlink:href", "Alan-Turing-Institute.svg")
+          .attr("id", "Alan-Turing-Institute")
+          // .attr("x", hex[4].x - (4 * targetr) - 25)
+          // .attr("y", hex[5].y -25 + (5 * targetr))
+          .attr("x", hex[1].x + (4 * targetr) - 30)
+          // .attr("x", hex[1].x + 170)
+          .attr("y", hex[2].y + 7)
+          .attr("height", 50)
+          // .attr("width", 50)
+          .attr("pointer-events", "none");
+
 
       // *** End set up plotting area ***
 
