@@ -237,20 +237,33 @@ let d8r = (function(d3){
 
     // create 2 data_set
     const data1 = [
-       {group: "A", value: 4},
-       {group: "B", value: 16},
-       {group: "C", value: 8}
+       {group: 1, value: 4},
+       {group: 2, value: 16},
+       {group: 3, value: 8},
+       {group: 4, value: 12},
+       {group: 5, value: 19},
+       {group: 6, value: 3},
+       {group: 7, value: 17},
+       {group: 8, value: 8},
+       {group: 9, value: 9},
+       {group: 10, value: 10}
     ];
 
     const data2 = [
-       {group: "A", value: 7},
-       {group: "B", value: 1},
-       {group: "C", value: 20},
-       {group: "D", value: 10}
+       {group: 2, value: 16},
+       {group: 3, value: 8},
+       {group: 4, value: 12},
+       {group: 5, value: 19},
+       {group: 6, value: 3},
+       {group: 7, value: 17},
+       {group: 8, value: 8},
+       {group: 9, value: 9},
+       {group: 10, value: 10},
+       {group: 11, value: 11}
     ];
 
     // set the dimensions and margins of the graph
-    const margin = {top: 50, right: 0, bottom: 50, left: 100};
+    const margin = {top: 50, right: 20, bottom: 50, left: 80};
 
     width = width - margin.left - margin.right;
     height = height - margin.top - margin.bottom;
@@ -290,25 +303,60 @@ let d8r = (function(d3){
 
       // Create the u variable
       var u = svg.selectAll("rect")
-        .data(data)
+        .data(data, d => d.group)
+
+      // u
+      //   .join("rect") // Add a new rect for each new elements
+      //   .transition()
+      //   .duration(1000)
+      //     .attr("x", d => x(d.group))
+      //     .attr("y", d => y(d.value))
+      //     .attr("id", d => d.group)
+      //     .attr("width", x.bandwidth())
+      //     .attr("height", d => height - y(d.value))
+      //     .attr("fill", "#69b3a2")
 
       u
-        .join("rect") // Add a new rect for each new elements
-        .transition()
-        .duration(1000)
-          .attr("x", d => x(d.group))
-          .attr("y", d => y(d.value))
-          .attr("width", x.bandwidth())
-          .attr("height", d => height - y(d.value))
-          .attr("fill", "#69b3a2")
+        .join(
+          enter => {
+            enter.append("rect")
+              .attr("id", d => d.group)
+              .attr("x", d => x(d.group) +20)
+              .attr("y", d => y(d.value))
+              .attr("width", x.bandwidth())
+              .attr("height", d => height - y(d.value))
+              .attr("fill", "#69b3a200")
+            .transition()
+            .duration(1000)
+              .attr("x", d => x(d.group))
+              .attr("fill", "#69b3a2")
+          },
+          update => {
+            update.transition()
+              .duration(1000)
+              .attr("x", d => x(d.group))
+          },
+          exit => {
+            exit.transition()
+              .duration(1000)
+              .attr("x", -20)
+              .attr("fill", "#69b3a200")
+              .remove()
+          }
+        )
     }
 
     // Initialize the plot with the first dataset
     update(data1)
 
+    function switchData() {
+      update(data2)
+    }
+
     return {
       chart: svg,
-      update: update
+      update: update,
+      switchData: switchData
     }
   }
 
