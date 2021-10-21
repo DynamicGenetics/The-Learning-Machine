@@ -283,8 +283,8 @@ let d8r = (function(d3){
     function update(data) {
 
       // Update the X axis
-      x.domain(data.map(d => d.group))
-      xAxis.transition().duration(1000).call(d3.axisBottom(x))
+      x.domain(data.map(d => d.group));
+      // xAxis.transition().duration(1000).call(d3.axisBottom(x)));
 
       // Update the Y axis
       // y.domain([0, d3.max(data, d => d.value) ]);
@@ -292,7 +292,7 @@ let d8r = (function(d3){
 
       // Create the u variable
       var u = svg.selectAll("rect")
-        .data(data, d => d.group)
+        .data(data, d => d.group);
 
       // u
       //   .join("rect") // Add a new rect for each new elements
@@ -315,11 +315,11 @@ let d8r = (function(d3){
               .attr("y", d => y(d.value))
               .attr("width", x.bandwidth())
               .attr("height", d => height - y(d.value))
-              .attr("fill", "#69b3a200")
+              .attr("fill", "#F8CC6400")
             .transition()
             .duration(1000)
               .attr("x", d => x(d.group))
-              .attr("fill", "#69b3a2");
+              .attr("fill", "#F8CC64");
           },
           update => {
             update.transition()
@@ -327,13 +327,14 @@ let d8r = (function(d3){
               .attr("x", d => x(d.group))
               .attr("y", d => y(d.value))
               .attr("width", x.bandwidth())
-              .attr("height", d => height - y(d.value));
+              .attr("height", d => height - y(d.value))
+              .attr("fill","#F8CC6466");
           },
           exit => {
             exit.transition()
               .duration(1000)
               .attr("x", -20)
-              .attr("fill", "#69b3a200")
+              .attr("fill", "#F8CC6400")
               .remove();
           }
         )
