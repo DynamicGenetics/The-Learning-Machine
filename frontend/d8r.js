@@ -262,6 +262,19 @@ let d8r = (function(d3){
        {group: 11, value: 11}
     ];
 
+    let data0 = [
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0}
+    ];
+
     // set the dimensions and margins of the graph
     const margin = {top: 50, right: 20, bottom: 50, left: 80};
 
@@ -295,7 +308,7 @@ let d8r = (function(d3){
 
       // Update the X axis
       x.domain(data.map(d => d.group))
-      xAxis.call(d3.axisBottom(x))
+      xAxis.transition().duration(1000).call(d3.axisBottom(x))
 
       // Update the Y axis
       y.domain([0, d3.max(data, d => d.value) ]);
@@ -329,28 +342,33 @@ let d8r = (function(d3){
             .transition()
             .duration(1000)
               .attr("x", d => x(d.group))
-              .attr("fill", "#69b3a2")
+              .attr("fill", "#69b3a2");
           },
           update => {
             update.transition()
               .duration(1000)
               .attr("x", d => x(d.group))
+              .attr("y", d => y(d.value))
+              .attr("width", x.bandwidth())
+              .attr("height", d => height - y(d.value));
           },
           exit => {
             exit.transition()
               .duration(1000)
               .attr("x", -20)
               .attr("fill", "#69b3a200")
-              .remove()
+              .remove();
           }
         )
     }
 
     // Initialize the plot with the first dataset
-    update(data1)
+    update(data0)
 
-    function switchData() {
-      update(data2)
+    function switchData(new_data) {
+      data0.push(new_data);
+      data0.shift();
+      update(data0);
     }
 
     return {
@@ -367,6 +385,8 @@ let d8r = (function(d3){
     compileData: compileData,
     hexagonArray: hexagonArray,
     dist: dist,
-    getBarChart: getBarChart
+    getBarChart: getBarChart,
+    uuidv4: uuidv4,
+    getRandomIntInclusive: getRandomIntInclusive
   };
 })(d3);

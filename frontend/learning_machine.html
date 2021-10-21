@@ -701,8 +701,6 @@
                   .transition().duration(100)
                   .attr("fill","#CCC");
 
-                barChart.switchData();
-
                 // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
                 //     .then(response => response.json())
                 //     .then((json) => {
@@ -769,6 +767,7 @@
                     nodesArray = d8r.refreshNodeArray(nodesArray, d8r.preprocess(myJson));
                     data = d8r.compileData(nodesArray);
                     restart();
+                    barChart.switchData({group: d8r.uuidv4(), value: d8r.getRandomIntInclusive(1, 20)});
                   })
                   .catch((error) => {
                     console.error('Server call error:', error);
