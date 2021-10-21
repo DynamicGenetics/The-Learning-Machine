@@ -236,20 +236,7 @@ let d8r = (function(d3){
   function getBarChart(height, width, div_id) {
 
     // create 2 data_sets
-    const data0 = [
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0}
-    ];
-
-    let data1 = [
+    let data0 = [
        {group: uuidv4(), value: 0},
        {group: uuidv4(), value: 0},
        {group: uuidv4(), value: 0},
@@ -281,13 +268,15 @@ let d8r = (function(d3){
       .range([ 0, width ])
       .padding(0.2);
     const xAxis = svg.append("g")
-      .attr("transform", `translate(0,${height})`)
+      .attr("transform", `translate(0,${height})`);
 
     // Initialize the Y axis
     const y = d3.scaleLinear()
       .range([ height, 0]);
     const yAxis = svg.append("g")
-      .attr("class", "myYaxis")
+      .attr("class", "myYaxis");
+    y.domain([0, 1]);
+    yAxis.call(d3.axisLeft(y));
 
 
     // A function that create / update the plot for a given variable:
@@ -298,8 +287,8 @@ let d8r = (function(d3){
       xAxis.transition().duration(1000).call(d3.axisBottom(x))
 
       // Update the Y axis
-      y.domain([0, d3.max(data, d => d.value) ]);
-      yAxis.transition().duration(1000).call(d3.axisLeft(y));
+      // y.domain([0, d3.max(data, d => d.value) ]);
+      // yAxis.transition().duration(1000).call(d3.axisLeft(y));
 
       // Create the u variable
       var u = svg.selectAll("rect")
@@ -354,12 +343,15 @@ let d8r = (function(d3){
     update(data0)
 
     function switchData(new_data) {
-      data1.push(new_data);
-      data1.shift();
-      update(data1);
+      data0.push(new_data);
+      data0.shift();
+      update(data0);
     }
 
     function reinitialise() {
+      data0 = data0.map( x => {
+        return {group: x.group, value: 0};
+      });
       update(data0);
     }
 

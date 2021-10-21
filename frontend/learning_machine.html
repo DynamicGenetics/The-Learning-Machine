@@ -769,7 +769,7 @@
                     nodesArray = d8r.refreshNodeArray(nodesArray, d8r.preprocess(myJson));
                     data = d8r.compileData(nodesArray);
                     restart();
-                    barChart.switchData({group: d8r.uuidv4(), value: d8r.getRandomIntInclusive(1, 20)});
+                    barChart.switchData({group: d8r.uuidv4(), value: Math.random()});
                   })
                   .catch((error) => {
                     console.error('Server call error:', error);
