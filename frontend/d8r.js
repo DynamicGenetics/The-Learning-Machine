@@ -235,34 +235,21 @@ let d8r = (function(d3){
 
   function getBarChart(height, width, div_id) {
 
-    // create 2 data_set
-    const data1 = [
-       {group: 1, value: 4},
-       {group: 2, value: 16},
-       {group: 3, value: 8},
-       {group: 4, value: 12},
-       {group: 5, value: 19},
-       {group: 6, value: 3},
-       {group: 7, value: 17},
-       {group: 8, value: 8},
-       {group: 9, value: 9},
-       {group: 10, value: 10}
+    // create 2 data_sets
+    const data0 = [
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0}
     ];
 
-    const data2 = [
-       {group: 2, value: 16},
-       {group: 3, value: 8},
-       {group: 4, value: 12},
-       {group: 5, value: 19},
-       {group: 6, value: 3},
-       {group: 7, value: 17},
-       {group: 8, value: 8},
-       {group: 9, value: 9},
-       {group: 10, value: 10},
-       {group: 11, value: 11}
-    ];
-
-    let data0 = [
+    let data1 = [
        {group: uuidv4(), value: 0},
        {group: uuidv4(), value: 0},
        {group: uuidv4(), value: 0},
@@ -334,6 +321,7 @@ let d8r = (function(d3){
           enter => {
             enter.append("rect")
               .attr("id", d => d.group)
+              .attr("class", "bar-chart-bar")
               .attr("x", d => x(d.group) +20)
               .attr("y", d => y(d.value))
               .attr("width", x.bandwidth())
@@ -366,15 +354,20 @@ let d8r = (function(d3){
     update(data0)
 
     function switchData(new_data) {
-      data0.push(new_data);
-      data0.shift();
+      data1.push(new_data);
+      data1.shift();
+      update(data1);
+    }
+
+    function reinitialise() {
       update(data0);
     }
 
     return {
       chart: svg,
       update: update,
-      switchData: switchData
+      switchData: switchData,
+      reinitialise: reinitialise
     }
   }
 
