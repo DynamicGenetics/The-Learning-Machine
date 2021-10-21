@@ -250,7 +250,7 @@ let d8r = (function(d3){
     ];
 
     // set the dimensions and margins of the graph
-    const margin = {top: 50, right: 20, bottom: 50, left: 80};
+    const margin = {top: 50, right: 20, bottom: 50, left: 100};
 
     width = width - margin.left - margin.right;
     height = height - margin.top - margin.bottom;
@@ -277,6 +277,21 @@ let d8r = (function(d3){
       .attr("class", "myYaxis");
     y.domain([0, 1]);
     yAxis.call(d3.axisLeft(y));
+
+    // Add X axis label:
+    svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("x", width - 1)
+        .attr("y", height + 20)
+        .text("now");
+
+    // Y axis label:
+    svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -40)
+        .attr("x", 0)
+        .text("classification accuracy")
 
 
     // A function that create / update the plot for a given variable:
