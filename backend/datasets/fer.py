@@ -266,7 +266,7 @@ class FER(VisionDataset):
         for url, md5 in self.resources:
             filename = url.rpartition("/")[-1].split("?")[0]
             self._download_and_extract_archive(
-                url, download_root=self.raw_folder, filename=filename, md5=md5
+                url, download_root=str(self.raw_folder), filename=filename, md5=md5
             )
 
         # process and save as torch files
