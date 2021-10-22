@@ -69,6 +69,7 @@
         background-color: #333333;
         padding: 15px 15px 0px 15px;
         opacity: 0.85;
+        visibility: hidden;
       }
 
       .info p {
@@ -797,13 +798,30 @@
               });
 
               // What happens when you click the info button
+              let infoButtonOn = 0;
               const infoButton = d3.select("#info");
               infoButton.on("click", () => {
-                infoButton.select("circle")
-                  .transition().duration(100)
-                  .attr("fill","#EEE")
-                  .transition().duration(100)
-                  .attr("fill","#CCC");
+                  if(infoButtonOn == 0){
+                    infoButton.select("circle")
+                      .transition().duration(100)
+                      .attr("fill","#EEE");
+                    d3.selectAll(".info")
+                      .style("visibility","visible")
+                      .transition().duration(200)
+                      .style("opacity", 0.85);
+                    // d3.selectAll(".info").style("visibility","visible");
+                    infoButtonOn = 1;
+                  } else {
+                    infoButton.select("circle")
+                      .transition().duration(200)
+                      .attr("fill","#CCC");
+                    d3.selectAll(".info").transition()
+                      .duration(200).style("opacity", 0)
+                      .transition().style("visibility","hidden");
+                    // d3.selectAll(".info").style("visibility","hidden");
+                    infoButtonOn = 0;
+                  }
+
 
                 // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
                 //     .then(response => response.json())
