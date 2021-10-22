@@ -58,6 +58,43 @@
         pointer-events: none;
       }
 
+      .info {
+        position: absolute;
+        text-align: left;
+        pointer-events: none;
+        font-family: sans-serif;
+        font-size: 14px;
+        border-radius: 20px;
+        color: #FFF;
+        background-color: #333333;
+        padding: 15px 15px 0px 15px;
+        opacity: 0.85;
+      }
+
+      .info p {
+        opacity: 1;
+      }
+
+      #control-buttons {
+        top: 90px;
+        left: 235px;
+        width: 200px;
+      }
+
+      #face-area {
+        top: 210px;
+        left: 505px;
+        width: 390px;
+        text-align: left;
+      }
+
+      #learning-graph {
+        bottom: 110px;
+        right: 40px;
+        width: 230px;
+        text-align: right;
+      }
+
       #header {
         position: absolute;
         top: 24px;
@@ -137,6 +174,41 @@
     <div id="university">
       <img src="University-of-Bristol.svg">
     </div>
+
+    <div id="control-buttons" class="info">
+      <p>The refresh button asks the Learning Machine for a new batch of faces
+        to classify.</p>
+      <p>The forget button asks the  Learning Machine to forget everything it
+        knows so you can start teaching it again.</p>
+      <p>The info button shows or hides this information!</p>
+    </div>
+    <div id="face-area" class="info">
+      <p>
+        Here the computer displays a selection of faces from the several
+        thousand it has in its data base. Around the outside are targets
+        representing six different emotions. You can teach the machine about the
+        emotions by dragging a face to the most closely matching target. If the
+        picture is not a human face, you can drag it to the "not human" target,
+        or if it's not showing an obvious emotion, you can drag it to "neutral".
+        Each time you classify a face, the computer will add a new one.
+      </p>
+      <p>
+        Each face is dragged in the direction of the emotions that the computer
+        is currently thinking it represents. The ring around the face, coloured
+        in the same way as the rings around the targets, shows you the balance
+        of probabilities of each emotion, based on the computer's current
+        knowledge, and the drag towards each emotion is based on this.
+      </p>
+    </div>
+    <div id="learning-graph" class="info">
+      <p>This graph shows how well the Learning Machine is doing at learning
+        how to classify the faces. Because we have a set of human-made labels
+        for some of the faces, we can use these to work out the accuracy of the
+        machine's current classification. This changes whenever you give the
+        computer new information by classifying one of the faces. Of course,
+        depending on what you teach it, this graph can go down as well as up!</p>
+    </div>
+
     <svg width="1400" height="800"></svg>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
