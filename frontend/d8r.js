@@ -233,12 +233,161 @@ let d8r = (function(d3){
     return(Math.sqrt(xs + ys));
   }
 
+  function getBarChart(height, width, div_id) {
+
+    // create 2 data_sets
+    let data0 = [
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0}
+    ];
+
+    // set the dimensions and margins of the graph
+    const margin = {top: 50, right: 20, bottom: 50, left: 100};
+
+    width = width - margin.left - margin.right;
+    height = height - margin.top - margin.bottom;
+
+    // append the svg object to the body of the page
+    const svg = d3.select(div_id)
+      .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+        .attr("transform", `translate(${margin.left},${margin.top})`);
+
+    // Initialize the X axis
+    const x = d3.scaleBand()
+      .range([ 0, width ])
+      .padding(0.2);
+    const xAxis = svg.append("g")
+      .attr("transform", `translate(0,${height})`);
+
+    // Initialize the Y axis
+    const y = d3.scaleLinear()
+      .range([ height, 0]);
+    const yAxis = svg.append("g")
+      .attr("class", "myYaxis");
+    y.domain([0, 1]);
+    yAxis.call(d3.axisLeft(y));
+
+    // Add X axis label:
+    svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("x", width - 1)
+        .attr("y", height + 20)
+        .text("now");
+
+    // Y axis label:
+    svg.append("text")
+        .attr("text-anchor", "end")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -40)
+        .attr("x", 0)
+        .text("how well am I doing at classifying faces?");
+
+
+    // A function that create / update the plot for a given variable:
+    function update(data) {
+
+      // Update the X axis
+      x.domain(data.map(d => d.group));
+      // xAxis.transition().duration(1000).call(d3.axisBottom(x)));
+
+      // Update the Y axis
+      // y.domain([0, d3.max(data, d => d.value) ]);
+      // yAxis.transition().duration(1000).call(d3.axisLeft(y));
+
+      // Create the u variable
+      var u = svg.selectAll("rect")
+        .data(data, d => d.group);
+
+      // u
+      //   .join("rect") // Add a new rect for each new elements
+      //   .transition()
+      //   .duration(1000)
+      //     .attr("x", d => x(d.group))
+      //     .attr("y", d => y(d.value))
+      //     .attr("id", d => d.group)
+      //     .attr("width", x.bandwidth())
+      //     .attr("height", d => height - y(d.value))
+      //     .attr("fill", "#69b3a2")
+
+      u
+        .join(
+          enter => {
+            enter.append("rect")
+              .attr("id", d => d.group)
+              .attr("class", "bar-chart-bar")
+              .attr("x", d => x(d.group) +20)
+              .attr("y", d => y(d.value))
+              .attr("width", x.bandwidth())
+              .attr("height", d => height - y(d.value))
+              .attr("fill", "#F8CC6400")
+            .transition()
+            .duration(1000)
+              .attr("x", d => x(d.group))
+              .attr("fill", "#F8CC64");
+          },
+          update => {
+            update.transition()
+              .duration(1000)
+              .attr("x", d => x(d.group))
+              .attr("y", d => y(d.value))
+              .attr("width", x.bandwidth())
+              .attr("height", d => height - y(d.value))
+              .attr("fill","#F8CC6466");
+          },
+          exit => {
+            exit.transition()
+              .duration(1000)
+              .attr("x", -20)
+              .attr("fill", "#F8CC6400")
+              .remove();
+          }
+        )
+    }
+
+    // Initialize the plot with the first dataset
+    update(data0)
+
+    function switchData(new_data) {
+      data0.push(new_data);
+      data0.shift();
+      update(data0);
+    }
+
+    function reinitialise() {
+      data0 = data0.map( x => {
+        return {group: x.group, value: 0};
+      });
+      update(data0);
+    }
+
+    return {
+      chart: svg,
+      update: update,
+      switchData: switchData,
+      reinitialise: reinitialise
+    }
+  }
+
   return {
     fixedNodeIDs: fixedNodeIDs,
     preprocess: preprocess,
     refreshNodeArray: refreshNodeArray,
     compileData: compileData,
     hexagonArray: hexagonArray,
-    dist: dist
+    dist: dist,
+    getBarChart: getBarChart,
+    uuidv4: uuidv4,
+    getRandomIntInclusive: getRandomIntInclusive
   };
 })(d3);

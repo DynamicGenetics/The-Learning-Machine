@@ -12,7 +12,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
           crossorigin="anonymous">
 
-    <title>Learning Machine</title>
+    <title>The Learning Machine</title>
 
     <style>
       .link {
@@ -30,13 +30,104 @@
       .emoji-label {
           font-family: sans-serif;
           font-size: 14px;
-          fill: #888;
+          fill: #555;
       }
 
-      #refresh-label {
-          font-family: sans-serif;
-          font-size: 14px;
-          fill: #888;
+      .h1-label {
+        font-family: sans-serif;
+        font-size: 24px;
+        fill: #000;
+      }
+
+      .description {
+        font-family: sans-serif;
+        font-size: 14px;
+        color: #555;
+      }
+
+      .target {
+        stroke-dasharray: 10,5;
+      }
+
+      #blurb {
+        position: absolute;
+        top: 66px;
+        right: 40px;
+        width: 390px;
+        text-align: right;
+        pointer-events: none;
+      }
+
+      .info {
+        position: absolute;
+        text-align: left;
+        pointer-events: none;
+        font-family: sans-serif;
+        font-size: 14px;
+        border-radius: 20px;
+        color: #FFF;
+        background-color: #333333;
+        padding: 15px 15px 0px 15px;
+        opacity: 0.85;
+        visibility: hidden;
+      }
+
+      .info p {
+        opacity: 1;
+      }
+
+      #control-buttons {
+        top: 90px;
+        left: 235px;
+        width: 200px;
+      }
+
+      #face-area {
+        top: 210px;
+        left: 505px;
+        width: 390px;
+        text-align: left;
+      }
+
+      #learning-graph {
+        bottom: 110px;
+        right: 40px;
+        width: 230px;
+        text-align: right;
+      }
+
+      #header {
+        position: absolute;
+        top: 24px;
+        right: 40px;
+        text-align: right;
+        pointer-events: none;
+      }
+
+      #university {
+        position: absolute;
+        bottom: 24px;
+        right: 209px;
+      }
+
+      #bar-chart {
+        position: absolute;
+        bottom: 75px;
+        right: 40px;
+      }
+
+      #university img {
+        height: 50px;
+      }
+
+      #turing {
+        position: absolute;
+        bottom: 24px;
+        right: 40px;
+      }
+
+      #turing img {
+        height: 50px;
       }
 
       text {
@@ -44,10 +135,81 @@
           font-size: 10px;
       }
 
+      .axis {
+    	  font: 10px sans-serif;
+    	}
+
+    	.axis path,
+    	.axis line {
+    	  fill: none;
+    	  stroke: #000;
+    	  shape-rendering: crispEdges;
+    	}
+
     </style>
   </head>
 
   <body>
+    <div id="header" class="h1-label">The Learning Machine</div>
+    <div id="blurb" class="description">
+      <p>We all lay down invisible digital footprints as we
+         interact with the modern world. Our movements are logged
+         by our phones, and our social media interactions form part of a
+         worldwide conversation.
+         Businesses use these data to understand customers, but they can be
+         useful for health researchers too. For example, we might
+         use them to understand the spread of disease, or the
+         development of depression. Some information, such
+         as the emotions people express on social media, are easy for most
+          humans to understand, but we often work with data from whole
+         populations. Computers are fast, but struggle with
+         tasks like this. Maybe human and artificial intelligence can work
+         together to improve human health. Can you teach the Learning Machine to
+          understand emotion?
+       </p>
+    </div>
+    <div id="bar-chart"></div>
+    <div id="turing">
+      <img src="Alan-Turing-Institute.svg">
+    </div>
+    <div id="university">
+      <img src="University-of-Bristol.svg">
+    </div>
+
+    <div id="control-buttons" class="info">
+      <p>The refresh button asks the Learning Machine for a new batch of faces
+        to classify.</p>
+      <p>The forget button asks the  Learning Machine to forget everything it
+        knows so you can start teaching it again.</p>
+      <p>The info button shows or hides this information!</p>
+    </div>
+    <div id="face-area" class="info">
+      <p>
+        Here the computer displays a selection of faces from the several
+        thousand it has in its data base. Around the outside are targets
+        representing six different emotions. You can teach the machine about the
+        emotions by dragging a face to the most closely matching target. If the
+        picture is not a human face, you can drag it to the "not human" target,
+        or if it's not showing an obvious emotion, you can drag it to "neutral".
+        Each time you classify a face, the computer will add a new one.
+      </p>
+      <p>
+        Each face is dragged in the direction of the emotions that the computer
+        is currently thinking it represents. The ring around the face, coloured
+        in the same way as the rings around the targets, shows you the balance
+        of probabilities of each emotion, based on the computer's current
+        knowledge, and the drag towards each emotion is based on this.
+      </p>
+    </div>
+    <div id="learning-graph" class="info">
+      <p>This graph shows how well the Learning Machine is doing at learning
+        how to classify the faces. Because we have a set of human-made labels
+        for some of the faces, we can use these to work out the accuracy of the
+        machine's current classification. This changes whenever you give the
+        computer new information by classifying one of the faces. Of course,
+        depending on what you teach it, this graph can go down as well as up!</p>
+    </div>
+
     <svg width="1400" height="800"></svg>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -97,6 +259,13 @@
 
       // Target circles for the emoji areas
       const hex = d8r.hexagonArray(cx, cy, gs);
+      svg.append("polygon")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("points", hex[0].x+","+hex[0].y+" "+hex[1].x+","+hex[1].y+" "+hex[2].x+","+hex[2].y+" "+hex[3].x+","+hex[3].y+" "+hex[4].x+","+hex[4].y+" "+hex[5].x+","+hex[5].y)
+          .attr("fill", "none")
+          .attr("stroke", "#EEE")
+          .attr("stroke-width", 3);
+
       for (let i = 0; i < 6; i++) {
           svg.append("circle")
               .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
@@ -104,6 +273,7 @@
               .attr("fill", "#EEE")
               .attr("cx", hex[i].x)
               .attr("cy", hex[i].y)
+              .attr("class", "target")
               .attr("id", d8r.fixedNodeIDs[i] + "_target")
               .attr("stroke", colours[i])
               .attr("stroke-width", 3);
@@ -120,31 +290,157 @@
               .attr("pointer-events", "none");
       }
 
+      // Button area
+      let buttonZone = svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("id", "button-zone");
+
+      buttonZone.append("circle")
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y)
+          .attr("fill", "#EEE")
+          .attr("r", targetr + 20);
+
+      buttonZone.append("circle")
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y + (5 * targetr))
+          .attr("fill", "#EEE")
+          .attr("r", targetr + 20);
+
+      buttonZone.append("rect")
+          .attr("x", hex[4].x - (5 * targetr) + 5)
+          .attr("y", hex[5].y)
+          .attr("width", (2 * targetr) + 40)
+          .attr("height", 5 * targetr)
+          .attr("fill", "#EEE");
+
       // Refresh button
       svg.append("g")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
           .attr("id", "refresh")
         .append("circle")
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[5].y)
-          .attr("fill", "#EEE")
-          .attr("r", targetr);
+          .attr("fill", "#CCC")
+          .attr("r", targetr)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 3);
+
+      svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+        .append("circle")
+          // .attr("cx", hex[4].x - (4 * targetr))
+          // .attr("cy", hex[5].y + (2.5 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y)
+          .attr("fill", "#FFF")
+          .attr("r", 25)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 7)
+          .attr("pointer-events", "none");
 
       svg.append("text")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
           .attr("id", "refresh-label")
+          .attr("class", "emoji-label")
           .attr("text-anchor", "middle")
-          .attr("x", hex[4].x - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr) + 25)
           .attr("y", hex[5].y + 40)
           .text("refresh")
           .attr("pointer-events", "none");
 
       svg.append("image")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
-          .attr("xlink:href", "refresh.svg")
+          .attr("xlink:href", "refresh_alt2.svg")
           .attr("id", "refresh-image")
-          .attr("x", hex[4].x - (4 * targetr) - 25)
+          .attr("x", hex[4].x - (4 * targetr))
           .attr("y", hex[5].y -25)
+          .attr("height", 50)
+          .attr("width", 50)
+          .attr("pointer-events", "none");
+
+      // Forget button
+      svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("id", "forget")
+        .append("circle")
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y + (2.5 * targetr))
+          .attr("fill", "#CCC")
+          .attr("r", targetr)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 3);
+
+      svg.append("text")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("id", "forget-label")
+          .attr("class", "emoji-label")
+          .attr("text-anchor", "middle")
+          .attr("x", hex[4].x - (4 * targetr) + 25)
+          .attr("y", hex[5].y + 40 + (2.5 * targetr))
+          .text("forget")
+          .attr("pointer-events", "none");
+
+      svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+        .append("circle")
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y + (2.5 * targetr))
+          .attr("fill", "#FFF")
+          .attr("r", 25)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 7)
+          .attr("pointer-events", "none");;
+
+      svg.append("image")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("xlink:href", "forget_alt.svg")
+          .attr("id", "forget-image")
+          .attr("x", hex[4].x - (4 * targetr))
+          .attr("y", hex[5].y -25 + (2.5 * targetr))
+          .attr("height", 50)
+          .attr("width", 50)
+          .attr("pointer-events", "none");
+
+      // Info button
+      svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("id", "info")
+        .append("circle")
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y + (5 * targetr))
+          .attr("fill", "#CCC")
+          .attr("r", targetr)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 3);
+
+      svg.append("text")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("id", "info-label")
+          .attr("class", "emoji-label")
+          .attr("text-anchor", "middle")
+          .attr("x", hex[4].x - (4 * targetr) + 25)
+          .attr("y", hex[5].y + 40 + (5 * targetr))
+          .text("info")
+          .attr("pointer-events", "none");
+
+      svg.append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+        .append("circle")
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
+          .attr("cy", hex[5].y + (5 * targetr))
+          .attr("fill", "#FFF")
+          .attr("r", 25)
+          .attr("stroke", "#FFF")
+          .attr("stroke-width", 7)
+          .attr("pointer-events", "none");;
+
+      svg.append("image")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("xlink:href", "info.svg")
+          .attr("id", "info-image")
+          .attr("x", hex[4].x - (4 * targetr))
+          .attr("y", hex[5].y -25 + (5 * targetr))
           .attr("height", 50)
           .attr("width", 50)
           .attr("pointer-events", "none");
@@ -155,10 +451,11 @@
           //.attr("id", "neutral")
       svg.append("circle")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("class", "target")
           .attr("id", "neutral")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (2.5 * targetr))
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[3].y - (2.5 * targetr))
           .attr("fill", "#EEE")
           .attr("r", targetr)
@@ -170,7 +467,7 @@
         .append("circle")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (2.5 * targetr))
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[3].y - (2.5 * targetr))
           .attr("fill", "#FFF")
           .attr("r", 25)
@@ -184,7 +481,7 @@
           .attr("text-anchor", "middle")
           // .attr("x", hex[4].x - (4 * targetr))
           // .attr("y", hex[5].y + 40 + (2.5 * targetr))
-          .attr("x", hex[4].x - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr) + 25)
           .attr("y", hex[3].y + 40 - (2.5 * targetr))
           .text("neutral")
           .attr("pointer-events", "none");
@@ -195,7 +492,7 @@
           .attr("id", "neutral-image")
           // .attr("x", hex[4].x - (4 * targetr) - 25)
           // .attr("y", hex[5].y -25 + (2.5 * targetr))
-          .attr("x", hex[4].x - 25 - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr))
           .attr("y", hex[3].y - 25 - (2.5 * targetr))
           .attr("height", 50)
           .attr("width", 50)
@@ -207,10 +504,11 @@
           //.attr("id", "not-human")
       svg.append("circle")
           .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .attr("class", "target")
           .attr("id", "not-human")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (5 * targetr))
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[3].y)
           .attr("fill", "#EEE")
           .attr("r", targetr)
@@ -222,7 +520,7 @@
         .append("circle")
           // .attr("cx", hex[4].x - (4 * targetr))
           // .attr("cy", hex[5].y + (2.5 * targetr))
-          .attr("cx", hex[4].x - (4 * targetr))
+          .attr("cx", hex[4].x - (4 * targetr) + 25)
           .attr("cy", hex[3].y)
           .attr("fill", "#FFF")
           .attr("r", 25)
@@ -236,7 +534,7 @@
           .attr("text-anchor", "middle")
           // .attr("x", hex[4].x - (4 * targetr))
           // .attr("y", hex[5].y + 40 + (5 * targetr))
-          .attr("x", hex[4].x - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr) + 25)
           .attr("y", hex[3].y + 40 )
           .text("not human")
           .attr("pointer-events", "none");
@@ -247,11 +545,39 @@
           .attr("id", "not-human-image")
           // .attr("x", hex[4].x - (4 * targetr) - 25)
           // .attr("y", hex[5].y -25 + (5 * targetr))
-          .attr("x", hex[4].x - 25 - (4 * targetr))
+          .attr("x", hex[4].x - (4 * targetr))
           .attr("y", hex[3].y - 25 )
           .attr("height", 50)
           .attr("width", 50)
           .attr("pointer-events", "none");
+
+      const barChart = d8r.getBarChart(400, 300, "#bar-chart");
+
+      // Logos
+      // svg.append("image")
+      //     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+      //     .attr("xlink:href", "University-of-Bristol.svg")
+      //     .attr("id", "University-of-Bristol")
+      //     // .attr("x", hex[4].x - (4 * targetr) - 25)
+      //     // .attr("y", hex[5].y -25 + (5 * targetr))
+      //     .attr("x", hex[1].x - targetr + 10)
+      //     .attr("y", hex[2].y + 7)
+      //     .attr("height", 50)
+      //     // .attr("width", 50)
+      //     .attr("pointer-events", "none");
+      //
+      // svg.append("image")
+      //     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+      //     .attr("xlink:href", "Alan-Turing-Institute.svg")
+      //     .attr("id", "Alan-Turing-Institute")
+      //     // .attr("x", hex[4].x - (4 * targetr) - 25)
+      //     // .attr("y", hex[5].y -25 + (5 * targetr))
+      //     .attr("x", hex[1].x + (4 * targetr) - 30)
+      //     // .attr("x", hex[1].x + 170)
+      //     .attr("y", hex[2].y + 7)
+      //     .attr("height", 50)
+      //     // .attr("width", 50)
+      //     .attr("pointer-events", "none");
 
 
       // *** End set up plotting area ***
@@ -430,9 +756,9 @@
               refreshButton.on("click", () => {
                 refreshButton.select("circle")
                   .transition().duration(100)
-                  .attr("fill","#CCC")
+                  .attr("fill","#EEE")
                   .transition().duration(100)
-                  .attr("fill","#EEE");
+                  .attr("fill","#CCC");
 
                 fetch(`http://localhost:8000/faces/${numberOfFaces}`)
                     .then(response => response.json())
@@ -445,6 +771,69 @@
                 .catch((error) => {
                   console.error('Restart server error:', error);
                 });
+              });
+
+              // What happens when you click the forget button
+              const forgetButton = d3.select("#forget");
+              forgetButton.on("click", () => {
+                forgetButton.select("circle")
+                  .transition().duration(100)
+                  .attr("fill","#EEE")
+                  .transition().duration(100)
+                  .attr("fill","#CCC");
+
+                barChart.reinitialise();
+
+                // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
+                //     .then(response => response.json())
+                //     .then((json) => {
+                //         nodesArray = d8r.preprocess(json);
+                //         // Set up data
+                //         data = d8r.compileData(nodesArray);
+                //         restart();
+                // })
+                // .catch((error) => {
+                //   console.error('Restart server error:', error);
+                // });
+              });
+
+              // What happens when you click the info button
+              let infoButtonOn = 0;
+              const infoButton = d3.select("#info");
+              infoButton.on("click", () => {
+                  if(infoButtonOn == 0){
+                    infoButton.select("circle")
+                      .transition().duration(100)
+                      .attr("fill","#EEE");
+                    d3.selectAll(".info")
+                      .style("visibility","visible")
+                      .transition().duration(200)
+                      .style("opacity", 0.85);
+                    // d3.selectAll(".info").style("visibility","visible");
+                    infoButtonOn = 1;
+                  } else {
+                    infoButton.select("circle")
+                      .transition().duration(200)
+                      .attr("fill","#CCC");
+                    d3.selectAll(".info").transition()
+                      .duration(200).style("opacity", 0)
+                      .transition().style("visibility","hidden");
+                    // d3.selectAll(".info").style("visibility","hidden");
+                    infoButtonOn = 0;
+                  }
+
+
+                // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
+                //     .then(response => response.json())
+                //     .then((json) => {
+                //         nodesArray = d8r.preprocess(json);
+                //         // Set up data
+                //         data = d8r.compileData(nodesArray);
+                //         restart();
+                // })
+                // .catch((error) => {
+                //   console.error('Restart server error:', error);
+                // });
               });
 
               function sendToBackend(imageId, emolabel){
@@ -478,6 +867,7 @@
                     nodesArray = d8r.refreshNodeArray(nodesArray, d8r.preprocess(myJson));
                     data = d8r.compileData(nodesArray);
                     restart();
+                    barChart.switchData({group: d8r.uuidv4(), value: Math.random()});
                   })
                   .catch((error) => {
                     console.error('Server call error:', error);
