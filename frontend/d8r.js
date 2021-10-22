@@ -291,7 +291,7 @@ let d8r = (function(d3){
         .attr("transform", "rotate(-90)")
         .attr("y", -40)
         .attr("x", 0)
-        .text("classification accuracy")
+        .text("how well am I doing at classifying faces?");
 
 
     // A function that create / update the plot for a given variable:

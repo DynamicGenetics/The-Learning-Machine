@@ -52,8 +52,8 @@
       #blurb {
         position: absolute;
         top: 66px;
-        right: 50px;
-        width: 350px;
+        right: 40px;
+        width: 390px;
         text-align: right;
         pointer-events: none;
       }
@@ -61,7 +61,7 @@
       #header {
         position: absolute;
         top: 24px;
-        right: 50px;
+        right: 40px;
         text-align: right;
         pointer-events: none;
       }
@@ -69,13 +69,13 @@
       #university {
         position: absolute;
         bottom: 24px;
-        right: 219px;
+        right: 209px;
       }
 
       #bar-chart {
         position: absolute;
         bottom: 75px;
-        right: 50px;
+        right: 40px;
       }
 
       #university img {
@@ -85,7 +85,7 @@
       #turing {
         position: absolute;
         bottom: 24px;
-        right: 50px;
+        right: 40px;
       }
 
       #turing img {
@@ -114,13 +114,21 @@
   <body>
     <div id="header" class="h1-label">The Learning Machine</div>
     <div id="blurb" class="description">
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-          commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-           velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-           occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-           mollit anim id est laborum.</p>
+      <p>We all lay down invisible digital footprints as we
+         interact with the modern world. Our movements are logged
+         by our phones, and our social media interactions form part of a
+         worldwide conversation.
+         Businesses use these data to understand customers, but they can be
+         useful for health researchers too. For example, we might
+         use them to understand the spread of disease, or the
+         development of depression. Some information, such
+         as the emotions people express on social media, are easy for most
+          humans to understand, but we often work with data from whole
+         populations. Computers are fast, but struggle with
+         tasks like this. Maybe human and artificial intelligence can work
+         together to improve human health. Can you teach the Learning Machine to
+          understand emotion?
+       </p>
     </div>
     <div id="bar-chart"></div>
     <div id="turing">
@@ -470,7 +478,7 @@
           .attr("width", 50)
           .attr("pointer-events", "none");
 
-      const barChart = d8r.getBarChart(500, 300, "#bar-chart");
+      const barChart = d8r.getBarChart(400, 300, "#bar-chart");
 
       // Logos
       // svg.append("image")
