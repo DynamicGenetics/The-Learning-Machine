@@ -12,14 +12,14 @@ from settings import LEARNING_MACHINE_MODEL, DATASET_NAME
 
 
 def make_nodes(
-    samples: Sequence[Sample], emotions: Prediction, classes: Sequence[str]
+    samples: Sequence[Sample], predicted_emotions: Prediction, classes: Sequence[str]
 ) -> List[Node]:
     nodes = list()
-    for sample, emotion in zip(samples, emotions):
-        emotion_map = {c: p for c, p in zip(classes, emotion)}
-        norm = sum(emotion_map.values())
+    for sample, sample_emotions in zip(samples, predicted_emotions):
+        emotion_map = {c: p for c, p in zip(classes, sample_emotions)}
         # Pop Neutral emotion after having calculated weights
         emotion_map.pop("neutral")
+        norm = sum(emotion_map.values())
 
         emotion_map = {c: v / norm for c, v in emotion_map.items()}
         links = [
