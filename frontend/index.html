@@ -245,6 +245,7 @@
       const cy = 0;
       const gs = 180;
       const numberOfFaces = 25;
+      const usePretrained = false;
 
       // Transition
       const t = svg.transition()
@@ -585,7 +586,7 @@
 
 
       // *** End set up plotting area ***
-      let facesEndPointURL= `http://localhost:8000/faces/${numberOfFaces}?pretrained=true`;
+      let facesEndPointURL= `http://localhost:8000/faces/${numberOfFaces}?pretrained=${usePretrained}`;
       fetch(facesEndPointURL)
           .then(response => response.json())
           .then((json) => {
@@ -838,7 +839,7 @@
 
 
                   // Send the update to the server and receive the response
-                  let forgetEndPointURL= "http://localhost:8000/faces/forget?pretrained=true";
+                  let forgetEndPointURL= `http://localhost:8000/faces/forget?pretrained=${usePretrained}`;
                   fetch(forgetEndPointURL, {
                     method: 'POST',
                     headers: {
