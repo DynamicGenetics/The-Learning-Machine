@@ -123,8 +123,8 @@ class Unet(nn.Module):
 class UNetMachine(LearningMachine):
     """Unet-based Learning Machine"""
 
-    def __init__(self, loss_reco_weight: float = 0.3):
-        super(UNetMachine, self).__init__()
+    def __init__(self, loss_reco_weight: float = 0.3, pretrained: bool = False):
+        super(UNetMachine, self).__init__(pretrained=pretrained)
         self.loss_reco_coeff = loss_reco_weight
         self._reconstruction_criterion, self._prediction_criterion = self._criterion
 
@@ -142,7 +142,9 @@ class UNetMachine(LearningMachine):
 
     def _load_model(self):
         model = Unet()
-        model.load_state_dict(self.weights)
+        if self._pretrained:
+            print("[LOG] Loading Pre-Trained Model")
+            model.load_state_dict(self.weights)
         return model
 
     def _init_optimiser(self):
@@ -173,6 +175,10 @@ class UNetMachine(LearningMachine):
     @property
     def prediction_criterion(self):
         return self._prediction_criterion
+
+    @property
+    def name(self) -> str:
+        return "UNet"
 
     def _model_call(self, batch: Sequence[Sample]) -> Tuple[Tensor, Tensor]:
         return self.model(batch)

@@ -51,8 +51,8 @@ class VGGNet(nn.Module):
 class VGGMachine(LearningMachine):
     """VGG-based Learning Machine"""
 
-    def __init__(self) -> None:
-        super(VGGMachine, self).__init__()
+    def __init__(self, pretrained: bool = False) -> None:
+        super(VGGMachine, self).__init__(pretrained=pretrained)
 
     @staticmethod
     def _set_transformer() -> TransformerType:
@@ -80,5 +80,10 @@ class VGGMachine(LearningMachine):
 
     def _load_model(self) -> nn.Module:
         model = VGGNet(pretrained=False, freeze=False)
-        model.load_state_dict(self.weights)
+        if self._pretrained:
+            model.load_state_dict(self.weights)
         return model
+
+    @property
+    def name(self) -> str:
+        return "VGG"
