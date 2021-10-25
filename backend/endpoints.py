@@ -7,6 +7,7 @@ from datasets import Sample, get_dataset
 from models import get_model
 from models.learning_machine import Prediction
 from schemas import Node, EmotionLink, BackendResponse, Annotation
+from schemas import ImageBoard
 from settings import LEARNING_MACHINE_MODEL, DATASET_NAME
 
 
@@ -34,8 +35,8 @@ def make_nodes(
     return nodes
 
 
-async def faces(number_of_faces: int = 25):
-    machine = get_model(LEARNING_MACHINE_MODEL)
+async def faces(number_of_faces: int = 25, pretrained: bool = False):
+    machine = get_model(LEARNING_MACHINE_MODEL, pretrained=pretrained)
     dataset = get_dataset(DATASET_NAME)
     samples = dataset.get_random_samples(k=number_of_faces)
     emotions = machine.predict(samples=samples)
@@ -86,6 +87,15 @@ async def annotate(annotation: Annotation):
     response = BackendResponse(nodes=nodes)
     return response.dict()
 
+
+async def forget(current_nodes: ImageBoard, pretrained: bool = False):
+    dataset = get_dataset(DATASET_NAME)
+    machine = get_model(LEARNING_MACHINE_MODEL, force_init=True, pretrained=pretrained)
+    samples = [dataset[nid] for nid in current_nodes.nodes]
+    predicted_emotions = machine.predict(samples=samples)
+    nodes = make_nodes(samples, predicted_emotions, dataset.emotions)
+    response = BackendResponse(nodes=nodes)
+    return response.dict()
 
 async def discard_image(image_id: str):
     dataset = get_dataset(DATASET_NAME)
