@@ -97,6 +97,7 @@ async def forget(current_nodes: ImageBoard, pretrained: bool = False):
     response = BackendResponse(nodes=nodes)
     return response.dict()
 
+
 async def discard_image(image_id: str):
     dataset = get_dataset(DATASET_NAME)
     machine = get_model(LEARNING_MACHINE_MODEL)
