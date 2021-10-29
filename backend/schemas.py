@@ -27,3 +27,7 @@ class Annotation(BaseModel):
     label: str
     current_nodes: List[str]
     new_nodes: int = 1
+
+
+class ImageBoard(BaseModel):
+    nodes: List[str]

@@ -38,9 +38,10 @@ class LearningMachine(ABC):
 
     CHECKPOINTS_FOLDER = BASE_FOLDER / "weights"
 
-    def __init__(self) -> None:
+    def __init__(self, pretrained: bool = False) -> None:
         self._model = None
         self._weights = None
+        self._pretrained = pretrained
         self._transformer = self._set_transformer()
         self._criterion = self._init_criterion()
         self._optimiser = self._init_optimiser()
@@ -101,6 +102,15 @@ class LearningMachine(ABC):
 
     @abstractmethod
     def _init_criterion(self) -> nn.Module:
+        pass
+
+    @property
+    def is_pretrained(self) -> bool:
+        return self._pretrained
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
         pass
 
     def _download_weights(self) -> NoReturn:

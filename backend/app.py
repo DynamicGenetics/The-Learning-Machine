@@ -5,6 +5,7 @@ import uvicorn
 from fastapi import FastAPI
 from endpoints import faces, get_face, annotate, test_face
 from endpoints import serialise_on_shutdown, discard_image
+from endpoints import forget
 from fastapi.middleware.cors import CORSMiddleware
 
 learning_machine_backend = FastAPI()
@@ -32,6 +33,7 @@ get_emotion_face = learning_machine_backend.get("/faces/image/{image_id}")(get_f
 annotate = learning_machine_backend.post("/faces/annotate/")(annotate)
 test_face = learning_machine_backend.get("/faces/test/{image_id}")(test_face)
 trash_image = learning_machine_backend.post("/faces/dispose/")(discard_image)
+forget = learning_machine_backend.post("/faces/forget/")(forget)
 serialise_on_shutdown = learning_machine_backend.on_event("shutdown")(
     serialise_on_shutdown
 )

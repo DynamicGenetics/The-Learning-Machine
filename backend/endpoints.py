@@ -7,18 +7,19 @@ from datasets import Sample, get_dataset
 from models import get_model
 from models.learning_machine import Prediction
 from schemas import Node, EmotionLink, BackendResponse, Annotation
+from schemas import ImageBoard
 from settings import LEARNING_MACHINE_MODEL, DATASET_NAME
 
 
 def make_nodes(
-    samples: Sequence[Sample], emotions: Prediction, classes: Sequence[str]
+    samples: Sequence[Sample], predicted_emotions: Prediction, classes: Sequence[str]
 ) -> List[Node]:
     nodes = list()
-    for sample, emotion in zip(samples, emotions):
-        emotion_map = {c: p for c, p in zip(classes, emotion)}
-        norm = sum(emotion_map.values())
+    for sample, sample_emotions in zip(samples, predicted_emotions):
+        emotion_map = {c: p for c, p in zip(classes, sample_emotions)}
         # Pop Neutral emotion after having calculated weights
         emotion_map.pop("neutral")
+        norm = sum(emotion_map.values())
 
         emotion_map = {c: v / norm for c, v in emotion_map.items()}
         links = [
@@ -34,8 +35,8 @@ def make_nodes(
     return nodes
 
 
-async def faces(number_of_faces: int = 25):
-    machine = get_model(LEARNING_MACHINE_MODEL)
+async def faces(number_of_faces: int = 25, pretrained: bool = False):
+    machine = get_model(LEARNING_MACHINE_MODEL, pretrained=pretrained)
     dataset = get_dataset(DATASET_NAME)
     samples = dataset.get_random_samples(k=number_of_faces)
     emotions = machine.predict(samples=samples)
@@ -83,6 +84,16 @@ async def annotate(annotation: Annotation):
     other_samples += dataset.get_random_samples(k=annotation.new_nodes)
     updated_emotions = machine.predict(samples=other_samples)
     nodes = make_nodes(other_samples, updated_emotions, dataset.emotions)
+    response = BackendResponse(nodes=nodes)
+    return response.dict()
+
+
+async def forget(current_nodes: ImageBoard, pretrained: bool = False):
+    dataset = get_dataset(DATASET_NAME)
+    machine = get_model(LEARNING_MACHINE_MODEL, force_init=True, pretrained=pretrained)
+    samples = [dataset[nid] for nid in current_nodes.nodes]
+    predicted_emotions = machine.predict(samples=samples)
+    nodes = make_nodes(samples, predicted_emotions, dataset.emotions)
     response = BackendResponse(nodes=nodes)
     return response.dict()
 

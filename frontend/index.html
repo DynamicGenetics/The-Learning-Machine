@@ -245,6 +245,7 @@
       const cy = 0;
       const gs = 180;
       const numberOfFaces = 25;
+      const usePretrained = false;
 
       // Transition
       const t = svg.transition()
@@ -585,8 +586,8 @@
 
 
       // *** End set up plotting area ***
-
-      fetch(`http://localhost:8000/faces/${numberOfFaces}`)
+      let facesEndPointURL= `http://localhost:8000/faces/${numberOfFaces}?pretrained=${usePretrained}`;
+      fetch(facesEndPointURL)
           .then(response => response.json())
           .then((json) => {
               let nodesArray = d8r.preprocess(json);
@@ -764,7 +765,7 @@
                   .transition().duration(100)
                   .attr("fill","#CCC");
 
-                fetch(`http://localhost:8000/faces/${numberOfFaces}`)
+                fetch(facesEndPointURL)
                     .then(response => response.json())
                     .then((json) => {
                         nodesArray = d8r.preprocess(json);
@@ -787,6 +788,7 @@
                   .attr("fill","#CCC");
 
                 barChart.reinitialise();
+                forget();
 
                 // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
                 //     .then(response => response.json())
@@ -825,20 +827,37 @@
                     // d3.selectAll(".info").style("visibility","hidden");
                     infoButtonOn = 0;
                   }
-
-
-                // fetch(`http://localhost:8000/faces/${numberOfFaces}`)
-                //     .then(response => response.json())
-                //     .then((json) => {
-                //         nodesArray = d8r.preprocess(json);
-                //         // Set up data
-                //         data = d8r.compileData(nodesArray);
-                //         restart();
-                // })
-                // .catch((error) => {
-                //   console.error('Restart server error:', error);
-                // });
               });
+
+              function forget() {
+                  data = d8r.compileData(nodesArray);
+                  restart();
+
+                  let callObject = {
+                    nodes: nodesArray.map(x => x.nodes[0].id)  // So the server knows which nodes to send updates for
+                  };
+
+
+                  // Send the update to the server and receive the response
+                  let forgetEndPointURL= `http://localhost:8000/faces/forget?pretrained=${usePretrained}`;
+                  fetch(forgetEndPointURL, {
+                    method: 'POST',
+                    headers: {
+                      "accept": "application/json",
+                      "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(callObject)
+                  }).then((response) => response.json())
+                  .then((myJson) => {
+                    nodesArray = d8r.refreshNodeArray(nodesArray, d8r.preprocess(myJson));
+                    data = d8r.compileData(nodesArray);
+                    restart();
+                    barChart.switchData({group: d8r.uuidv4(), value: Math.random()});
+                  })
+                  .catch((error) => {
+                    console.error('Server call error:', error);
+                  });
+              }
 
               function sendToBackend(imageId, emolabel){
                   // Remove the dragged element
