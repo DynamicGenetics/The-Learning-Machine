@@ -852,7 +852,7 @@
                     nodesArray = d8r.refreshNodeArray(nodesArray, d8r.preprocess(myJson));
                     data = d8r.compileData(nodesArray);
                     restart();
-                    barChart.switchData({group: d8r.uuidv4(), value: Math.random()});
+                    barChart.switchData(d8r.chartData(myJson));
                   })
                   .catch((error) => {
                     console.error('Server call error:', error);
@@ -890,7 +890,7 @@
                     nodesArray = d8r.refreshNodeArray(nodesArray, d8r.preprocess(myJson));
                     data = d8r.compileData(nodesArray);
                     restart();
-                    barChart.switchData({group: d8r.uuidv4(), value: Math.random()});
+                    barChart.switchData(d8r.chartData(myJson));
                   })
                   .catch((error) => {
                     console.error('Server call error:', error);

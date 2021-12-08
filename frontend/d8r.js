@@ -89,6 +89,17 @@ let d8r = (function(d3){
     return processed;
   }
 
+  function chartData(serverResponse){
+    let processed = [];
+    serverResponse.metrics.forEach( element => {
+      processed.push({
+        "group": element.name,
+        "value": element.value
+      });
+    });
+    return processed[0];  // just returning the first right now!
+  }
+
   // Convert server response node into node array node
   function toNodeArrayNode(serverResponseNode){
     let linksArray = [];
@@ -243,10 +254,7 @@ let d8r = (function(d3){
        {group: uuidv4(), value: 0},
        {group: uuidv4(), value: 0},
        {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0},
-       {group: uuidv4(), value: 0}
+       {group: "ACC", value: 0},
     ];
 
     // set the dimensions and margins of the graph
@@ -360,6 +368,7 @@ let d8r = (function(d3){
 
     function switchData(new_data) {
       data0.push(new_data);
+      console.log(new_data);
       data0.shift();
       update(data0);
     }
@@ -382,6 +391,7 @@ let d8r = (function(d3){
   return {
     fixedNodeIDs: fixedNodeIDs,
     preprocess: preprocess,
+    chartData: chartData,
     refreshNodeArray: refreshNodeArray,
     compileData: compileData,
     hexagonArray: hexagonArray,
