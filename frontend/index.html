@@ -631,6 +631,10 @@
 
               restart();
 
+              // Cool the simulation down so it doesn't jiggle forever
+              // simulation.alphaDecay(0.01);
+              simulation.alphaTarget(0);
+
               // What happens when the simulation ticks
               function ticked() {
                 link.attr("x1", d => d.source.x)
