@@ -609,28 +609,24 @@
               let link = g.append("g").selectAll(".link")
               let node = g.append("g").selectAll(".node")
 
-              // Arcs for donut charts
-              let arc = d3.arc().innerRadius(25).outerRadius(28);
-              let pie = d3.pie()
-                  .value(function (d) {
-                      return d;
-                  }).sort(null);
+
 
               function donuts(d) {
                 let dataNode = d3.select(this);
 
+                // Arcs for donut charts
+                let arc = d3.arc().innerRadius(25).outerRadius(28);
+                let pie = d3.pie()
+                    .value(function (d) {
+                        return d;
+                    }).sort(null);
+
                 dataNode.selectAll(".arc")
                     .data(function(d){return pie(d.donut);})
-                    .join(
-                      enter => {
-                        enter.append("path")
+                    .join("path")
                           .attr("class","arc")
                           .attr("d", arc)
                           .style("fill", function(d,i){return colours[i]});
-                      },
-                      update => update,
-                      exit => exit.remove
-                    );
               }
 
               restart();
@@ -685,7 +681,10 @@
                         .attr("opacity", 1));
                       return thisNode;
                     },
-                    update => update,
+                    update => {
+                      update.filter(d => (d.group === "data")).each(donuts);
+                      return update;
+                    },
                     exit => exit.remove()
                   );
 
