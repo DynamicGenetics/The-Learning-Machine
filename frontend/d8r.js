@@ -93,7 +93,8 @@ let d8r = (function(d3){
     let processed = [];
     serverResponse.metrics.forEach( element => {
       processed.push({
-        "group": element.name,
+        //"group": element.name,
+        "group": uuidv4(),
         "value": element.value
       });
     });
@@ -254,7 +255,10 @@ let d8r = (function(d3){
        {group: uuidv4(), value: 0},
        {group: uuidv4(), value: 0},
        {group: uuidv4(), value: 0},
-       {group: "ACC", value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0},
+       {group: uuidv4(), value: 0}
     ];
 
     // set the dimensions and margins of the graph
