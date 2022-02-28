@@ -169,7 +169,7 @@
          populations. Computers are fast, but struggle with
          tasks like this. Maybe human and artificial intelligence can work
          together to improve human health. Can you teach the Learning Machine to
-          understand emotion?
+          recognise emotion?
        </p>
     </div>
     <div id="bar-chart"></div>
@@ -189,19 +189,19 @@
     </div>
     <div id="face-area" class="info">
       <p>
-        Here the computer displays a selection of faces from the several
+        Here the Learning Machine displays a selection of faces from the several
         thousand it has in its data base. Around the outside are targets
         representing six different emotions. You can teach the machine about the
         emotions by dragging a face to the most closely matching target. If the
         picture is not a human face, you can drag it to the "not human" target,
         or if it's not showing an obvious emotion, you can drag it to "neutral".
-        Each time you classify a face, the computer will add a new one.
+        Each time you classify a face, the Learning Machine will add a new one.
       </p>
       <p>
-        Each face is dragged in the direction of the emotions that the computer
+        Each face is dragged in the direction of the emotions that the Learning Machine
         is currently thinking it represents. The ring around the face, coloured
         in the same way as the rings around the targets, shows you the balance
-        of probabilities of each emotion, based on the computer's current
+        of probabilities of each emotion, based on the Learning Machine's current
         knowledge, and the drag towards each emotion is based on this.
       </p>
     </div>
@@ -210,7 +210,7 @@
         how to classify the faces. Because we have a set of human-made labels
         for some of the faces, we can use these to work out the accuracy of the
         machine's current classification. This changes whenever you give the
-        computer new information by classifying one of the faces. Of course,
+        Learning Machine new information by classifying one of the faces. Of course,
         depending on what you teach it, this graph can go down as well as up!</p>
     </div>
 
@@ -609,31 +609,31 @@
               let link = g.append("g").selectAll(".link")
               let node = g.append("g").selectAll(".node")
 
-              // Arcs for donut charts
-              let arc = d3.arc().innerRadius(25).outerRadius(28);
-              let pie = d3.pie()
-                  .value(function (d) {
-                      return d;
-                  }).sort(null);
+
 
               function donuts(d) {
                 let dataNode = d3.select(this);
 
+                // Arcs for donut charts
+                let arc = d3.arc().innerRadius(25).outerRadius(28);
+                let pie = d3.pie()
+                    .value(function (d) {
+                        return d;
+                    }).sort(null);
+
                 dataNode.selectAll(".arc")
                     .data(function(d){return pie(d.donut);})
-                    .join(
-                      enter => {
-                        enter.append("path")
+                    .join("path")
                           .attr("class","arc")
                           .attr("d", arc)
                           .style("fill", function(d,i){return colours[i]});
-                      },
-                      update => update,
-                      exit => exit.remove
-                    );
               }
 
               restart();
+
+              // Cool the simulation down so it doesn't jiggle forever
+              // simulation.alphaDecay(0.01);
+              simulation.alphaTarget(0);
 
               // What happens when the simulation ticks
               function ticked() {
@@ -685,7 +685,10 @@
                         .attr("opacity", 1));
                       return thisNode;
                     },
-                    update => update,
+                    update => {
+                      update.filter(d => (d.group === "data")).each(donuts);
+                      return update;
+                    },
                     exit => exit.remove()
                   );
 
@@ -852,7 +855,7 @@
                     nodesArray = d8r.refreshNodeArray(nodesArray, d8r.preprocess(myJson));
                     data = d8r.compileData(nodesArray);
                     restart();
-                    barChart.switchData({group: d8r.uuidv4(), value: Math.random()});
+                    barChart.switchData(d8r.chartData(myJson));
                   })
                   .catch((error) => {
                     console.error('Server call error:', error);
@@ -890,7 +893,9 @@
                     nodesArray = d8r.refreshNodeArray(nodesArray, d8r.preprocess(myJson));
                     data = d8r.compileData(nodesArray);
                     restart();
-                    barChart.switchData({group: d8r.uuidv4(), value: Math.random()});
+
+
+                    barChart.switchData(d8r.chartData(myJson));
                   })
                   .catch((error) => {
                     console.error('Server call error:', error);

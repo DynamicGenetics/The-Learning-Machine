@@ -1,7 +1,7 @@
 """Schema definitions for ReSTful APIs based on `pydantic`"""
 
 from pydantic import BaseModel
-from typing import List
+from typing import List, Sequence
 
 
 class EmotionLink(BaseModel):
@@ -14,12 +14,19 @@ class Node(BaseModel):
     id: str
     image: str
     links: List[EmotionLink]
+    expected_emotion: int
+    expected_emotion_name: str
     group: str = "data"
 
+
+class Metric(BaseModel):
+    name: str = "ACC"
+    value: float
 
 class BackendResponse(BaseModel):
     # session_id: str
     nodes: List[Node]
+    metrics: Sequence[Metric]
 
 
 class Annotation(BaseModel):
