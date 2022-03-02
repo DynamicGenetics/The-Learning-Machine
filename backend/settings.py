@@ -1,4 +1,4 @@
-from models import UNET_MODEL
+from models import VGG_FER_MODEL, UNET_MODEL
 from datasets import FER_DATASET
 
 
