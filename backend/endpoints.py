@@ -3,7 +3,7 @@ from typing import Sequence, List
 
 from starlette.responses import StreamingResponse
 
-from datasets import Sample, get_dataset
+from datasets import Sample, get_dataset, FER_METRICS
 from models import get_model
 from models.learning_machine import Prediction
 from schemas import Node, EmotionLink, BackendResponse, Annotation
@@ -32,7 +32,7 @@ def _make_nodes(
             image=f"http://localhost:8000/faces/image/{sample.uuid}",
             links=links,
             expected_emotion=sample.emotion,
-            expected_emotion_name=sample.emotion_label
+            expected_emotion_name=sample.emotion_label,
         )
         nodes.append(node)
     return nodes
@@ -60,7 +60,8 @@ async def faces(number_of_faces: int = 25, pretrained: bool = PRETRAINED):
     machine = get_model(LEARNING_MACHINE_MODEL, pretrained=pretrained)
     dataset = get_dataset(DATASET_NAME)
     samples = dataset.get_random_samples(k=number_of_faces)
-    emotions = machine.predict(samples=samples)
+    evaluation_dataset = get_dataset(FER_METRICS)
+    emotions = machine.predict(samples=evaluation_dataset.evaluation_samples)
     response = backend_response(samples, emotions, dataset.emotions)
     return response.dict()
 
