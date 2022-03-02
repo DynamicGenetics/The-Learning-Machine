@@ -64,6 +64,11 @@ def only_fer_training() -> Dataset:
     return FER(root=default_root_folder, download=True, split="train")
 
 
+def only_fer_validation() -> Dataset:
+    default_root_folder = path.dirname(path.abspath(__file__))
+    return FER(root=default_root_folder, download=True, split="validation")
+
+
 class DataSource:
 
     BLACKLIST_SAMPLES = Path("indices_blacklist.txt")
@@ -159,6 +164,40 @@ class DataSource:
         self._serialise(self._blacklist, self.BLACKLIST_SAMPLES)
 
 
+class EvaluationDataSource(DataSource):
+
+    # for more details, see notebooks/FER_AutoEncoder.ipynb
+    SAMPLES_PER_EMOTION_INDEX = {
+        "angry": [67, 134, 141, 483, 330, 76, 282, 171, 292, 353],
+        "disgust": [11, 7, 8, 20, 22, 40, 43, 41, 53, 35],
+        "fear": [44, 378, 70, 57, 199, 140, 443, 372, 95, 110],
+        "happy": [210, 529, 255, 848, 751, 47, 782, 370, 400, 803],
+        "sad": [166, 484, 346, 185, 97, 314, 274, 194, 43, 500],
+        "surprise": [19, 118, 114, 150, 127, 237, 350, 370, 186, 389],
+        "neutral": [405, 338, 348, 591, 259, 347, 503, 506, 514, 299],
+    }
+
+    def __init__(
+        self,
+        target_emotions: Sequence[str] = FER.classes,
+    ) -> None:
+        super().__init__(
+            dataset_load_fn=only_fer_validation, target_emotions=target_emotions
+        )
+        self._evaluation_samples = None
+
+    @property
+    def evaluation_samples(self):
+        if self._evaluation_samples is None:
+            self._evaluation_samples = list()
+            for emotion, indices in self.SAMPLES_PER_EMOTION_INDEX.items():
+                if emotion == "neutral":
+                    continue
+                for sample_idx in indices:
+                    self._evaluation_samples.append(self[sample_idx])
+        return self._evaluation_samples
+
+
 def load_fer_dataset_lazy() -> DataSource:
     """Instantiate a DataSource instance, proxying access to
     corresponding torch.Dataset.
@@ -179,3 +218,25 @@ def load_fer_training_lazy() -> DataSource:
     only on the first instance access.
     """
     return DataSource(dataset_load_fn=only_fer_training)  # default load function
+
+
+def load_fer_validation_lazy() -> DataSource:
+    """Instantiate a DataSource instance, proxying access to
+    corresponding torch.Dataset.
+
+    The DataSource lazy connects to the mapped dataset, holding
+    reference to the database, and establishing actual connection
+    only on the first instance access.
+    """
+    return DataSource(dataset_load_fn=only_fer_validation)  # default load function
+
+
+def load_fer_evaluation_ds_lazy() -> DataSource:
+    """Instantiate an EvaluationDataSource instance, proxying access to
+    corresponding torch.Dataset.
+
+    The EvaluationDataSource lazy connects to the mapped dataset, holding
+    reference to the set of samples (per emotion) to be used to calculate
+    metrics (i.e. performance) of the learning machine during training.
+    """
+    return EvaluationDataSource()
