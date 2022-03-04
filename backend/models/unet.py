@@ -1,16 +1,16 @@
-from pathlib import Path
-
 import torch
-from torch import nn, optim, Tensor
+from torch import nn
 from collections import OrderedDict
-from .learning_machine import LearningMachine
-from .learning_machine import Prediction, ModelOutput
-from datasets import Sample
-from typing import Sequence, Tuple, Optional, Union
 
 
 class Unet(nn.Module):
-    def __init__(self, in_channels=1, out_channels=1, filters=16, n_classes=7):
+    def __init__(
+        self,
+        in_channels: int = 1,
+        out_channels: int = 1,
+        filters: int = 16,
+        n_classes: int = 7,
+    ):
         super(Unet, self).__init__()
 
         self.encoder1 = self._block(in_channels, filters, name="enc1")
@@ -118,86 +118,3 @@ class Unet(nn.Module):
                 ]
             )
         )
-
-
-class UNetMachine(LearningMachine):
-    """Unet-based Learning Machine"""
-
-    def __init__(self, loss_reco_weight: float = 0.3, pretrained: bool = False):
-        super(UNetMachine, self).__init__(pretrained=pretrained)
-        self.loss_reco_coeff = loss_reco_weight
-        self._reconstruction_criterion, self._prediction_criterion = self._criterion
-
-    @property
-    def checkpoint(self) -> Path:
-        return self.CHECKPOINTS_FOLDER / "unet_learning_machine_nodecay_aug.pt"
-
-    @property
-    def weights_urls(self) -> Tuple[str, str]:
-        return (
-            "https://www.dropbox.com/s/nctn4x49t2xf6sq/"
-            + "unet_learning_machine_nodecay_aug.pt?dl=1",
-            "dbbd8866c5c6c7497feae735dd1513ce",
-        )
-
-    def _load_model(self):
-        model = Unet()
-        if self._pretrained:
-            print("[LOG] Loading Pre-Trained Model")
-            model.load_state_dict(self.weights)
-        return model
-
-    def _init_optimiser(self):
-        return optim.Adam(self.model.parameters(), lr=0.0001)
-
-    def _init_criterion(self) -> Tuple[nn.Module, nn.Module]:
-        reco_criterion = nn.MSELoss(reduction="mean")
-        pred_criterion = nn.CrossEntropyLoss()
-        return reco_criterion, pred_criterion
-
-    @property
-    def criterion(self) -> Tuple[nn.Module, nn.Module]:
-        if self._criterion is None:
-            (
-                self._reconstruction_criterion,
-                self._prediction_criterion,
-            ) = self._init_criterion()
-            self._criterion = (
-                self._reconstruction_criterion,
-                self._prediction_criterion,
-            )
-        return self._criterion
-
-    @property
-    def reconstruction_criterion(self):
-        return self._reconstruction_criterion
-
-    @property
-    def prediction_criterion(self):
-        return self._prediction_criterion
-
-    @property
-    def name(self) -> str:
-        return "UNet"
-
-    def _model_call(self, batch: Sequence[Sample]) -> Tuple[Tensor, Tensor]:
-        return self.model(batch)
-
-    def _calculate_loss(
-        self,
-        labels: Tensor,
-        model_output: ModelOutput,
-        input_batch: Optional[Tensor] = None,
-    ) -> Tensor:
-        reco_images, emotions_logits = model_output
-        loss_reco = self.reconstruction_criterion(reco_images, input_batch)
-        loss_pred = self.prediction_criterion(emotions_logits, labels)
-        loss = (self.loss_reco_coeff * loss_reco) + (
-            1.0 - self.loss_reco_coeff
-        ) * loss_pred
-        return loss
-
-    @staticmethod
-    def _get_model_emotion_predictions(model_output: ModelOutput) -> Prediction:
-        reco_images, emotions_logits = model_output
-        return emotions_logits.detach().cpu()

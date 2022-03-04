@@ -219,9 +219,8 @@ class FER(VisionDataset):
     def idx_to_class(self):
         return {v: k for k, v in self.class_to_idx.items()}
 
-    @staticmethod
-    def classes_map():
-        return {i: c for i, c in enumerate(FER.classes)}
+    def classes_map(self):
+        return {i: c for i, c in enumerate(self.classes)}
 
     def _check_exists(self):
         for data_fname in self.data_files.values():
@@ -269,19 +268,14 @@ class FER(VisionDataset):
                 url, download_root=str(self.raw_folder), filename=filename, md5=md5
             )
 
-        # process and save as torch files
-        def _set_partition(label: str) -> str:
-            if label == "Training":
-                return Partition.train.value
-            if label == "PrivateTest":
-                return Partition.validation.value
-            return Partition.test.value
-
         print("Processing...", end="")
+        self._process_partitions()
+        print("Done!")
+
+    def _process_partitions(self):
         raw_data_filepath = self.raw_folder / self.RAW_DATA_FOLDER / self.RAW_DATA_FILE
         raw_df = pd.read_csv(raw_data_filepath)
-        raw_df["data_partition"] = raw_df.Usage.apply(_set_partition)
-
+        raw_df["data_partition"] = raw_df.Usage.apply(self._set_partition)
         for partition in Partition:
             dataset = raw_df[raw_df["data_partition"] == partition.value]
             images = self._images_as_torch_tensors(dataset)
@@ -289,7 +283,15 @@ class FER(VisionDataset):
             data_file = self.processed_folder / self.data_files[partition]
             with open(data_file, "wb") as f:
                 torch.save((images, labels), f)
-        print("Done!")
+
+    # process and save as torch files
+    @staticmethod
+    def _set_partition(label: str) -> str:
+        if label == "Training":
+            return Partition.train.value
+        if label == "PrivateTest":
+            return Partition.validation.value
+        return Partition.test.value
 
     def _images_as_torch_tensors(self, dataset: pd.DataFrame) -> torch.Tensor:
         """

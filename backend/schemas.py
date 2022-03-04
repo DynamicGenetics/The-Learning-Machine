@@ -14,14 +14,13 @@ class Node(BaseModel):
     id: str
     image: str
     links: List[EmotionLink]
-    expected_emotion: int
-    expected_emotion_name: str
     group: str = "data"
 
 
 class Metric(BaseModel):
     name: str = "ACC"
     value: float
+
 
 class BackendResponse(BaseModel):
     # session_id: str

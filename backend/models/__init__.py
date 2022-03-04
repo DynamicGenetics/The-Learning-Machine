@@ -1,9 +1,8 @@
-from .vgg import VGGMachine
-from .unet import UNetMachine
-from .learning_machine import LearningMachine
+from .learning_machine import LearningMachine, UNetMachine, VGGMachine, VGGFERMachine
 
-VGG_MODEL = "vgg"
+VGG_MODEL = "vgg13"
 UNET_MODEL = "unet"
+VGG_FER_MODEL = "vgg_fer"
 MODELS_PROXY = dict()
 
 
@@ -15,6 +14,8 @@ def setup_learning_machine(model_key: str, pretrained: bool):
         return VGGMachine(pretrained=pretrained)
     if model_key == UNET_MODEL:
         return UNetMachine(pretrained=pretrained)
+    if model_key == VGG_FER_MODEL:
+        return VGGFERMachine(pretrained=pretrained)
     raise ValueError(f"Model Key {model_key} is not currently supported")
 
 

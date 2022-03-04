@@ -26,6 +26,12 @@ notebooks/FER/
 notebooks/fer2013
 notebooks/*.tar.gz
 
+# FER+ local dataset
+FERPlus/*
+backend/datasets/FERPlus/*
+notebooks/FERPlus/
+notebooks/fer2013new
+
 
 # Python env (Codespaces)
 pythonenv3.8
@@ -158,3 +164,9 @@ dmypy.json
 
 # PyCharm project settings
 .idea
+/notebooks/models/umap_ferplus_test.joblib
+/notebooks/models/umap_ferplus_train.joblib
+/notebooks/models/umap_ferplus_valid.joblib
+/notebooks/models/umap_test.joblib
+/notebooks/models/umap_train.joblib
+/notebooks/models/umap_valid.joblib
