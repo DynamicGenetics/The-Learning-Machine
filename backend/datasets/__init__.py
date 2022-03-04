@@ -5,11 +5,14 @@ This package provides access to all the datasets available to the learning machi
 from .fer import FER
 from .sources import load_fer_dataset_lazy, load_fer_training_lazy
 from .sources import load_fer_validation_lazy, load_fer_evaluation_ds_lazy
+from .sources import load_ferplus_dataset_lazy, load_ferplus_evaluation_ds_lazy
 from .sources import DataSource, Sample
 
 
 # Available Dataset Keys
 FER_DATASET = "FER"
+FERPLUS_DATASET = "FER+"
+FERPLUS_METRICS = "FER+_METRICS"
 FER_TRAINING = "FER_TRAIN"
 FER_VALIDATION = "FER_VALIDATION"
 FER_METRICS = "FER_METRICS"
@@ -19,6 +22,8 @@ DATASETS_PROXY = {
     FER_TRAINING: load_fer_training_lazy(),
     FER_VALIDATION: load_fer_validation_lazy(),
     FER_METRICS: load_fer_evaluation_ds_lazy(),
+    FERPLUS_DATASET: load_ferplus_dataset_lazy(),
+    FERPLUS_METRICS: load_ferplus_evaluation_ds_lazy(),
 }
 
 
@@ -57,6 +62,8 @@ __all__ = [
     "FER_METRICS",
     "FER_VALIDATION",
     "FER_TRAINING",
+    "FERPLUS_METRICS",
+    "FERPLUS_DATASET",
     "DATASETS_PROXY",
     "get_dataset",
     "Sample",

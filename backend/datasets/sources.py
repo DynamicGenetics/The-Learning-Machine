@@ -2,9 +2,11 @@
 Specify Data sources used to proxy access to available Torch Datasets
 """
 
+import numpy as np
 from dataclasses import dataclass
 from torch.utils.data import Dataset, ConcatDataset
 from .fer import FER
+from .ferplus import FERPlus
 from typing import Callable, Sequence, Union, Set
 from PIL.Image import Image as PILImage
 from random import sample
@@ -21,9 +23,8 @@ class Sample:
     emotion: int
     image: PILImage
 
-    @property
-    def emotion_label(self):
-        return FER.classes_map()[self.emotion]
+    def emotion_label(self, classes):
+        return classes[self.emotion]
 
     @property
     def uuid(self) -> str:
@@ -51,11 +52,23 @@ class Sample:
 DatasetLoadFn = Callable[[], Dataset]
 
 
-def default_load_fer_dataset() -> Dataset:
+def load_fer_dataset() -> Dataset:
     default_root_folder = path.dirname(path.abspath(__file__))
     fer_train = FER(root=default_root_folder, download=True, split="train")
     fer_valid = FER(root=default_root_folder, download=True, split="validation")
     fer_test = FER(root=default_root_folder, download=True, split="test")
+    return ConcatDataset([fer_train, fer_valid, fer_test])
+
+
+def load_ferplus_dataset() -> Dataset:
+    default_root_folder = path.dirname(path.abspath(__file__))
+    fer_train = FERPlus(root=default_root_folder, download=True, split="train")
+    fer_valid = FERPlus(
+        root=default_root_folder,
+        download=True,
+        split="validation",
+    )
+    fer_test = FERPlus(root=default_root_folder, download=True, split="test")
     return ConcatDataset([fer_train, fer_valid, fer_test])
 
 
@@ -69,6 +82,11 @@ def only_fer_validation() -> Dataset:
     return FER(root=default_root_folder, download=True, split="validation")
 
 
+def only_ferplus_validation() -> Dataset:
+    default_root_folder = path.dirname(path.abspath(__file__))
+    return FERPlus(root=default_root_folder, download=True, split="validation")
+
+
 class DataSource:
 
     BLACKLIST_SAMPLES = Path("indices_blacklist.txt")
@@ -76,7 +94,7 @@ class DataSource:
 
     def __init__(
         self,
-        dataset_load_fn: DatasetLoadFn = default_load_fer_dataset,
+        dataset_load_fn: DatasetLoadFn = load_fer_dataset,
         target_emotions: Sequence[str] = FER.classes,
     ) -> None:
         self._dataset = None  # Instantiated once via property
@@ -142,10 +160,6 @@ class DataSource:
         for sample_idx in rnd_indices:
             samples.append(self[sample_idx])
             self._items_sampled.add(sample_idx)
-        # #  tweak
-        # samples.append(
-        #     self["c69b31e495d132603ae3c8e72dc236ed0e1889bd7b62b0e2f431161ca5ad0c1f_2f6"]
-        # )
         return samples
 
     def discard_sample(self, index: Union[str, int]):
@@ -164,25 +178,22 @@ class DataSource:
         self._serialise(self._blacklist, self.BLACKLIST_SAMPLES)
 
 
-class EvaluationDataSource(DataSource):
+class EvaluationFERDataSource(DataSource):
 
     # for more details, see notebooks/FER_AutoEncoder.ipynb
     SAMPLES_PER_EMOTION_INDEX = {
-        "angry": [67, 134, 141, 483, 330, 76, 282, 171, 292, 353],
-        "disgust": [11, 7, 8, 20, 22, 40, 43, 41, 53, 35],
-        "fear": [44, 378, 70, 57, 199, 140, 443, 372, 95, 110],
-        "happy": [210, 529, 255, 848, 751, 47, 782, 370, 400, 803],
-        "sad": [166, 484, 346, 185, 97, 314, 274, 194, 43, 500],
-        "surprise": [19, 118, 114, 150, 127, 237, 350, 370, 186, 389],
-        "neutral": [405, 338, 348, 591, 259, 347, 503, 506, 514, 299],
+        "angry": [467, 1023, 1081, 3529, 2544, 560, 2148, 1340, 2236, 2711],
+        "disgust": [911, 419, 614, 1372, 1486, 2482, 2650, 2495, 3488, 2221],
+        "fear": [358, 2551, 515, 440, 1325, 994, 3040, 2498, 709, 800],
+        "happy": [840, 2138, 998, 3460, 2995, 225, 3124, 1501, 1617, 3227],
+        "sad": [1051, 2974, 2116, 1145, 605, 1897, 1638, 1207, 285, 3050],
+        "surprise": [161, 1034, 1018, 1333, 1095, 2095, 3035, 3215, 1692, 3386],
+        "neutral": [2262, 1885, 1963, 3391, 1469, 1941, 2869, 2893, 2934, 1667],
     }
 
-    def __init__(
-        self,
-        target_emotions: Sequence[str] = FER.classes,
-    ) -> None:
+    def __init__(self) -> None:
         super().__init__(
-            dataset_load_fn=only_fer_validation, target_emotions=target_emotions
+            dataset_load_fn=only_fer_validation, target_emotions=FER.classes
         )
         self._evaluation_samples = None
 
@@ -197,6 +208,50 @@ class EvaluationDataSource(DataSource):
                     self._evaluation_samples.append(self[sample_idx])
         return self._evaluation_samples
 
+    @property
+    def ground_truth(self):
+        y_true = list()
+        for emotion, indices in self.SAMPLES_PER_EMOTION_INDEX.items():
+            if emotion == "neutral":
+                continue
+            y_true += [self.emotions.index(emotion)] * len(indices)
+        return np.asarray(y_true)
+
+
+class EvaluationFERPlusDataSource(DataSource):
+
+    # for more details, see notebooks/FERPlus_AutoEncoder.ipynb
+    SAMPLES_PER_EMOTION_INDEX = {
+        "happy": [175, 1562, 1629, 531, 1905, 900, 2566],
+        "surprise": [1873, 1137, 79, 1827, 1882, 2588, 823],
+        "sad": [232, 1552, 2514, 983, 206, 2269, 901],
+        "angry": [1242, 1038, 555, 1496, 559, 989, 513],
+        "disgust": [2501, 1291, 281, 2012, 384, 2342, 467],
+        "fear": [1172, 2196, 2528, 1287, 704, 237, 1049],
+    }
+
+    def __init__(self) -> None:
+        super().__init__(
+            dataset_load_fn=only_ferplus_validation, target_emotions=FERPlus.classes
+        )
+        self._evaluation_samples = None
+
+    @property
+    def evaluation_samples(self):
+        if self._evaluation_samples is None:
+            self._evaluation_samples = list()
+            for emotion, indices in self.SAMPLES_PER_EMOTION_INDEX.items():
+                for sample_idx in indices:
+                    self._evaluation_samples.append(self[sample_idx])
+        return self._evaluation_samples
+
+    @property
+    def ground_truth(self):
+        y_true = list()
+        for emotion, indices in self.SAMPLES_PER_EMOTION_INDEX.items():
+            y_true += [self.emotions.index(emotion)] * len(indices)
+        return np.asarray(y_true)
+
 
 def load_fer_dataset_lazy() -> DataSource:
     """Instantiate a DataSource instance, proxying access to
@@ -207,6 +262,19 @@ def load_fer_dataset_lazy() -> DataSource:
     only on the first instance access.
     """
     return DataSource()  # default load function
+
+
+def load_ferplus_dataset_lazy() -> DataSource:
+    """Instantiate a DataSource instance, proxying access to
+    corresponding torch.Dataset for the FERPlus dataset.
+
+    The DataSource lazy connects to the mapped dataset, holding
+    reference to the database, and establishing actual connection
+    only on the first instance access.
+    """
+    return DataSource(
+        dataset_load_fn=load_ferplus_dataset, target_emotions=FERPlus.classes
+    )  # default load function
 
 
 def load_fer_training_lazy() -> DataSource:
@@ -231,6 +299,11 @@ def load_fer_validation_lazy() -> DataSource:
     return DataSource(dataset_load_fn=only_fer_validation)  # default load function
 
 
+# ======================
+# EVALUATION DATA SOURCE
+# ======================
+
+
 def load_fer_evaluation_ds_lazy() -> DataSource:
     """Instantiate an EvaluationDataSource instance, proxying access to
     corresponding torch.Dataset.
@@ -239,4 +312,15 @@ def load_fer_evaluation_ds_lazy() -> DataSource:
     reference to the set of samples (per emotion) to be used to calculate
     metrics (i.e. performance) of the learning machine during training.
     """
-    return EvaluationDataSource()
+    return EvaluationFERDataSource()
+
+
+def load_ferplus_evaluation_ds_lazy() -> DataSource:
+    """Instantiate an EvaluationDataSource instance, proxying access to
+    corresponding torch.Dataset.
+
+    The EvaluationDataSource lazy connects to the mapped dataset, holding
+    reference to the set of samples (per emotion) to be used to calculate
+    metrics (i.e. performance) of the learning machine during training.
+    """
+    return EvaluationFERPlusDataSource()
