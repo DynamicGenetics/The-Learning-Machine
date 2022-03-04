@@ -1,5 +1,6 @@
 import base64
 from io import BytesIO
+from typing import List, Tuple
 
 import numpy as np
 
@@ -18,8 +19,7 @@ from .utils import calculate_centroids, get_neighbours, get_raw_dataset
 from .utils import collect_reference_images
 from .model import Embedding
 
-
-PALETTE = d3["Category10"][7]  # 7 classes, i.e. emotions
+PALETTE = d3["Category10"][10]
 MARKERS = [
     "asterisk",
     "circle",
@@ -28,6 +28,9 @@ MARKERS = [
     "inverted_triangle",
     "plus",
     "square",
+    "star",
+    "triangle_pin",
+    "circle_y",
 ]
 
 HOVER_TAG = HoverTool(
@@ -40,7 +43,7 @@ HOVER_TAG = HoverTool(
 )
 
 
-def img_to_base64_urls(dataset: FER) -> list[str]:
+def img_to_base64_urls(dataset: FER) -> List[str]:
     """"""
     imgs_base64 = list()
     for img, _ in iter(dataset):
@@ -52,7 +55,7 @@ def img_to_base64_urls(dataset: FER) -> list[str]:
     return imgs_base64
 
 
-def image_labels(dataset: FER) -> list[str]:
+def image_labels(dataset: FER) -> List[str]:
     """"""
     img_labels = list()
     for idx, (_, emotion) in enumerate(iter(dataset)):
@@ -63,12 +66,12 @@ def image_labels(dataset: FER) -> list[str]:
 def plot_embedding(
     embedding: Embedding,
     with_hover: bool = True,
-    palette: list[str] = PALETTE,
-    markers: list[str] = MARKERS,
+    palette: Tuple[str] = PALETTE,
+    markers: Tuple[str] = tuple(MARKERS),
     legend_loc: str = "top_right",
 ):
 
-    fer_raw = get_raw_dataset(partition=embedding.partition)
+    fer_raw = get_raw_dataset(embedding=embedding)
 
     data_source = ColumnDataSource(
         {
@@ -94,8 +97,8 @@ def plot_embedding(
         legend_field="emotion_label",
         fill_alpha=0.2,
         size=5,
-        color=factor_cmap("emotion_label", palette=palette, factors=Embedding.CLASSES),
-        marker=factor_mark("emotion_label", markers=markers, factors=Embedding.CLASSES),
+        color=factor_cmap("emotion_label", palette=palette, factors=embedding.classes),
+        marker=factor_mark("emotion_label", markers=markers, factors=embedding.classes),
     )
     p.legend.location = legend_loc
     return p
@@ -128,14 +131,12 @@ def plot_centroids(
         fill_alpha=0.8,
         size=8,
         color="black",
-        marker=factor_mark("emotion_label", markers=MARKERS, factors=embedding.CLASSES),
+        marker=factor_mark("emotion_label", markers=MARKERS, factors=embedding.classes),
     )
     return embedding_fig
 
 
-def plot_neighbours(
-    embedding: Embedding,
-):
+def plot_neighbours(embedding: Embedding, n_neighbours: int = 10):
     centroids = calculate_centroids(embedding)
     centroid_data = ColumnDataSource(
         {
@@ -144,7 +145,9 @@ def plot_neighbours(
             "emotion_label": list(centroids.keys()),
         }
     )
-    neighbours_per_emotion, _ = get_neighbours(embedding=embedding)
+    neighbours_per_emotion, _ = get_neighbours(
+        embedding=embedding, n_neighbours=n_neighbours
+    )
     neighbours_data = ColumnDataSource(
         {
             "d1": np.hstack([n[:, 0] for n in neighbours_per_emotion.values()]),
@@ -169,7 +172,7 @@ def plot_neighbours(
         size=8,
         color="magenta",
         legend_field="emotion_label",
-        marker=factor_mark("emotion_label", markers=MARKERS, factors=embedding.CLASSES),
+        marker=factor_mark("emotion_label", markers=MARKERS, factors=embedding.classes),
     )
     p.scatter(
         x="d1",
@@ -178,19 +181,21 @@ def plot_neighbours(
         fill_alpha=0.8,
         size=8,
         color="black",
-        marker=factor_mark("emotion_label", markers=MARKERS, factors=embedding.CLASSES),
+        marker=factor_mark("emotion_label", markers=MARKERS, factors=embedding.classes),
     )
     p.legend.location = "bottom_right"
     return p
 
 
-def plot_reference_images(embedding: Embedding):
+def plot_reference_images(embedding: Embedding, ncols: int = 10):
     print(f"REFERENCE IMAGES FOR {embedding.partition.upper()} DATASET")
-    reference_images_per_emotion = collect_reference_images(embedding=embedding)
+    reference_images_per_emotion = collect_reference_images(
+        embedding=embedding, n_images=ncols
+    )
     for emotion, selected_samples in reference_images_per_emotion.items():
         print(f"Selected Representatives for Emotion {emotion}")
         _, axs = plt.subplots(
-            nrows=1, ncols=10, sharex=True, sharey=True, figsize=(25, 3)
+            nrows=1, ncols=ncols, sharex=True, sharey=True, figsize=(25, 3)
         )
         for idx, sample in enumerate(selected_samples):
             axs[idx].imshow(
