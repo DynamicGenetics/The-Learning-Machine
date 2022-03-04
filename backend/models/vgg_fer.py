@@ -7,22 +7,20 @@ class VGGFERNet(nn.Module):
     def __init__(self, in_channels: int = 1, n_classes: int = 7):
         super(VGGFERNet, self).__init__()
 
-        self.conv1 = self._block(in_channels, 64, name="conv1")
-        self.conv2 = self._block(64, 128, name="conv2")
-
-        self.conv3 = self._block(128, 256, name="conv3", n_conv_layers=3)
-        self.conv4 = self._block(256, 256, name="conv4", n_conv_layers=3)
+        self.conv1 = self._block(in_channels, 64, name="conv1", n_conv_layers=1)
+        self.conv2 = self._block(64, 128, name="conv2", n_conv_layers=1)
+        self.conv3 = self._block(128, 256, name="conv3", n_conv_layers=1)
 
         self.classifier = nn.Sequential(
             OrderedDict(
                 [
-                    ("cl_fc_1", nn.Linear(256 * 3 * 3, 1024)),
+                    ("cl_fc_1", nn.Linear(1024 * 3 * 3, 1024)),
                     ("cl_relu_1", nn.ReLU(inplace=True)),
-                    ("cl_drop_1", nn.Dropout(0.5)),
-                    ("cl_fc_2", nn.Linear(1024, 1024)),
+                    ("cl_drop_1", nn.Dropout(0.25)),
+                    ("cl_fc_2", nn.Linear(1024, 256)),
                     ("cl_relu_2", nn.ReLU(inplace=True)),
-                    ("cl_drop_2", nn.Dropout(0.5)),
-                    ("output", nn.Linear(1024, n_classes)),
+                    ("cl_drop_2", nn.Dropout(0.25)),
+                    ("output", nn.Linear(256, n_classes)),
                 ]
             )
         )
@@ -31,10 +29,8 @@ class VGGFERNet(nn.Module):
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.conv3(x)
-        x = self.conv4(x)
         x = torch.flatten(x, 1)
-        x = self.classifier(x)
-        return x
+        return self.classifier(x)
 
     @staticmethod
     def _block(in_channels: int, features: int, name: str, n_conv_layers: int = 2):
