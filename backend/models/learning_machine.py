@@ -7,6 +7,7 @@ from pathlib import Path
 
 from numpy import float32 as float32
 from numpy import log as np_log
+from numpy.typing import ArrayLike
 from abc import abstractmethod, ABC
 
 import torch
@@ -19,7 +20,6 @@ from torchvision.datasets.utils import download_url
 # Typing
 from typing import Any, NoReturn, Sequence, Tuple, Optional
 from typing import Callable, Union, Dict, Optional
-from nptyping import NDArray
 from PIL.Image import Image as PILImage
 
 # Models
@@ -30,13 +30,7 @@ from .vgg import VGG13Net
 from datasets import Sample
 
 ModelOutput = Union[Tensor, Tuple[Tensor, Tensor]]
-Prediction = NDArray[
-    (
-        Any,
-        7,
-    ),
-    float32,
-]
+Prediction = ArrayLike
 TransformerType = Callable[[Union[Sequence[Callable], PILImage, Tensor]], Tensor]
 StateDictType = (
     "OrderedDict[str, Tensor]"  # Union[Dict[str, Tensor], Dict[str, Tensor]]
@@ -101,7 +95,8 @@ class LearningMachine(ABC):
         if self._weights is None:
             print(f"[INFO]: loading {self.checkpoint}")
             if not self.checkpoint.exists():
-                self._download_weights()
+                filename = str(self.checkpoint).rpartition("/")[-1]
+                self._download_weights(filename=filename)
             self._weights = torch.load(self.checkpoint, map_location=TORCH_DEVICE)
         return self._weights
 
@@ -126,7 +121,7 @@ class LearningMachine(ABC):
     def name(self) -> str:
         pass
 
-    def _download_weights(self) -> NoReturn:
+    def _download_weights(self, filename: str = None) -> NoReturn:
         # download weights files
 
         # MONKEY Patch torchvision utils
@@ -135,7 +130,8 @@ class LearningMachine(ABC):
         utils._get_redirect_url = lambda url, max_hops: url
 
         url, md5 = self.weights_urls
-        filename = url.rpartition("/")[-1].split("?")[0]
+        if filename is None or not filename:
+            filename = url.rpartition("/")[-1].split("?")[0]
         download_url(url, root=self.CHECKPOINTS_FOLDER, filename=filename, md5=md5)
 
     def _calculate_loss(
@@ -331,44 +327,62 @@ class VGGMachine(LearningMachine):
         model.load_state_dict(self.weights)
         return model
 
+    @property
+    def name(self) -> str:
+        return "VGG13"
+
 
 class VGGFERMachine(LearningMachine):
     """VGG-based Learning Machine"""
 
+    CHECKPOINTS = {
+        0: (
+            "https://www.dropbox.com/s/5brhzr80kxyudxy/lm_vgg13_ferplus_00.pt?dl=1",
+            "87ba8e38ba447922772600398595945a",
+        ),
+        5: (
+            "https://www.dropbox.com/s/lnurx896dgwsl0t/lm_vgg13_ferplus_05.pt?dl=1",
+            "e27f5cb46b30875e24a1310146e8e8e7",
+        ),
+        10: (
+            "https://www.dropbox.com/s/wj2ibpz724c9jwf/lm_vgg13_ferplus_10.pt?dl=1",
+            "050875a869cbca1514b41345b3ec9ac4",
+        ),
+        15: (
+            "https://www.dropbox.com/s/6zx5bggd5xnv8rs/lm_vgg13_ferplus_15.pt?dl=1",
+            "d323262f11e4559c7dff6b5ec0a8fbc6",
+        ),
+        50: (
+            "https://www.dropbox.com/s/ena5po6laudkcap/lm_vgg13_ferplus_50.pt?dl=1",
+            "5f40014ec4b88260bc14e6db8fa33d1a",
+        ),
+    }
+
+    REF_CHECKPOINT = 10
+
     def __init__(self, pretrained: bool = False) -> None:
         super(VGGFERMachine, self).__init__(pretrained=pretrained)
 
-    @staticmethod
-    def _set_transformer() -> TransformerType:
-        def _convert_rgb(img: PILImage) -> PILImage:
-            return img.convert("RGB")
-
-        return Compose([Lambda(_convert_rgb), ToTensor()])
-
     @property
     def checkpoint(self) -> Path:
-        return self.CHECKPOINTS_FOLDER / "TBD"
+        return self.CHECKPOINTS_FOLDER / "lm_vgg13_ferplus.pt"
 
     @property
     def weights_urls(self) -> Tuple[str, str]:
-        return (
-            "TBD",
-            "TBD",
-        )
+        return self.CHECKPOINTS[self.REF_CHECKPOINT]
 
     def _init_optimiser(self) -> optim.Optimizer:
-        momentum = -32 / np_log(0.9)  # -minibatch_size/log(0.9)
-        return optim.SGD(self.model.parameters(), lr=0.001, momentum=momentum)
+        return optim.Adam(self.model.parameters(), lr=0.001)
 
     def _init_criterion(self) -> nn.Module:
         return nn.CrossEntropyLoss()
 
     def _load_model(self) -> nn.Module:
-        model = VGGFERNet(in_channels=3)
-        # if self._pretrained:
-        #     model.load_state_dict(self.weights)
+        model = VGGFERNet(in_channels=1, n_classes=8)
+        if self._pretrained:
+            model.load_state_dict(self.weights)
         return model
 
     @property
     def name(self) -> str:
-        return "VGG"
+        return "VGG13FER+"
